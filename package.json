@@ -13,6 +13,7 @@
     "gatsby": "2.18.11"
   },
   "scripts": {
-    "start": "cd spotify-to-apple-music && yarn develop"
+    "start": "cd spotify-to-apple-music && yarn start",
+    "start:stam": "cd spotify-to-apple-music && yarn start"
   }
 }

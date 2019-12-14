@@ -11,6 +11,10 @@
 
 Transfers Spotify playlists to Apple Music library.
 
+```shell
+yarn start:stam
+```
+
 ## License
 
 MIT © Brent Mealhouse
