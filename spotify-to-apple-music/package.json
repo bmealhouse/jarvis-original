@@ -1,0 +1,26 @@
+{
+  "private": true,
+  "name": "spotify-to-apple-music",
+  "description": "Transfers Spotify playlists to Apple Music library",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "1.2.26",
+    "@fortawesome/free-solid-svg-icons": "5.12.0",
+    "@fortawesome/react-fontawesome": "0.1.8",
+    "axios": "0.19.0",
+    "easy-peasy": "3.2.3",
+    "gatsby": "2.18.11",
+    "gatsby-plugin-react-helmet": "3.1.18",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-helmet": "5.2.1"
+  },
+  "devDependencies": {
+    "apple-music-token-node": "2.0.1",
+    "prettier": "1.19.1"
+  },
+  "scripts": {
+    "start": "gatsby develop"
+  }
+}
