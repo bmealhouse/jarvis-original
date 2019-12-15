@@ -1,3 +1,11 @@
+# folders
+.cache
 node_modules
-yarn-error.log
+public
+
+# files
+*.p8
 .DS_Store
+.env.*
+now-secrets.json
+yarn-error.log

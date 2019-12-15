@@ -1,6 +1,8 @@
+# folders
+.cache
 node_modules
-pkg
+public
 
-CHANGELOG.md
-README.md
+# files
+*.md
 package.json

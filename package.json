@@ -10,7 +10,8 @@
     "url": "https://github.com/bmealhouse/baymax"
   },
   "devDependencies": {
-    "gatsby": "2.18.11"
+    "gatsby": "2.18.11",
+    "prettier": "1.19.1"
   },
   "scripts": {
     "start": "cd spotify-to-apple-music && yarn start",
