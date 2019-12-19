@@ -8,7 +8,8 @@ const VZW_VIEWPAYBILL_URL = 'https://login.verizonwireless.com/vzauth/UI/Login'
 const VZW_API_BASEURL =
   'https://myvpostpay.verizonwireless.com/ui/bill/data/ao/digital'
 
-const main = async () => {
+main()
+async function main() {
   try {
     let pageTransition = null
 
@@ -63,8 +64,6 @@ const main = async () => {
     console.error(error.toString())
   }
 }
-
-main()
 
 async function fetchSummaryData(browser) {
   const summaryTab = await browser.newPage()
