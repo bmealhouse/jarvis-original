@@ -13,7 +13,7 @@ export async function search(term) {
 
   return quotaExceededRetry(async () => {
     console.log(`Searching "${term}"`)
-    const { songs: { data } = {} } = await musicKit.api.search(term, {
+    const {songs: {data} = {}} = await musicKit.api.search(term, {
       limit: 50,
       types: 'songs',
     })
@@ -25,15 +25,15 @@ export async function search(term) {
 export async function createPlaylist(name, songs) {
   const musicKit = window.MusicKit.getInstance()
   const appleMusicToken = await musicKit.authorize()
-  const { post } = makeRequestUtils(appleMusicToken)
+  const {post} = makeRequestUtils(appleMusicToken)
 
   const {
     data: [playlistData],
   } = await post('/me/library/playlists', {
-    attributes: { name },
+    attributes: {name},
     relationships: {
       tracks: {
-        data: songs.map(song => ({ id: song.id, type: 'songs' })),
+        data: songs.map(song => ({id: song.id, type: 'songs'})),
       },
     },
   })
@@ -44,7 +44,7 @@ export async function createPlaylist(name, songs) {
 export async function addToLibrary(songs) {
   const musicKit = window.MusicKit.getInstance()
   await musicKit.authorize()
-  await musicKit.api.library.add({ songs: songs.map(song => song.id) })
+  await musicKit.api.library.add({songs: songs.map(song => song.id)})
 }
 
 function makeRequestUtils(appleMusicToken) {

@@ -4,13 +4,13 @@ const playlistCache = new Map()
 window.playlistCache = playlistCache
 
 export async function playlists(getStoreState) {
-  const { get } = makeRequestUtils(getStoreState)
-  const { items } = await get('/v1/me/playlists?limit=50')
+  const {get} = makeRequestUtils(getStoreState)
+  const {items} = await get('/v1/me/playlists?limit=50')
   return items
 }
 
 export async function deletePlaylist(getStoreState, id) {
-  const { del } = makeRequestUtils(getStoreState)
+  const {del} = makeRequestUtils(getStoreState)
   await del(`/v1/playlists/${id}/followers`)
 }
 
@@ -19,13 +19,14 @@ export async function playlistTracks(getStoreState, id) {
     return playlistCache.get(id)
   }
 
-  const { get } = makeRequestUtils(getStoreState)
+  const {get} = makeRequestUtils(getStoreState)
 
   let tracks = []
   let nextUri = `/v1/playlists/${id}/tracks`
 
   do {
-    const { items, next } = await get(nextUri)
+    // eslint-disable-next-line no-await-in-loop
+    const {items, next} = await get(nextUri)
     tracks = [...tracks, ...items.map(item => item.track)]
     nextUri = next && next.replace('https://api.spotify.com', '')
   } while (nextUri)
@@ -36,20 +37,22 @@ export async function playlistTracks(getStoreState, id) {
 }
 
 export async function removeTracksFromLibrary(getStoreState, tracks) {
-  const { del } = makeRequestUtils(getStoreState)
+  const {del} = makeRequestUtils(getStoreState)
 
   while (tracks.length > 0) {
     // purposely mutate tracks to send 50 per request
     const groupOfTracks = tracks.splice(0, 50)
+
+    // eslint-disable-next-line no-await-in-loop
     await del(
       `/v1/me/tracks`,
-      groupOfTracks.map(track => track.id)
+      groupOfTracks.map(track => track.id),
     )
   }
 }
 
 function makeRequestUtils(getStoreState) {
-  const { credentials } = getStoreState()
+  const {credentials} = getStoreState()
 
   const options = {
     baseURL: 'https://api.spotify.com',
@@ -61,11 +64,11 @@ function makeRequestUtils(getStoreState) {
 
   return {
     async get(uri) {
-      const { data } = await axios.get(uri, options)
+      const {data} = await axios.get(uri, options)
       return data
     },
     async del(uri, data) {
-      await axios.delete(uri, { ...options, data })
+      await axios.delete(uri, {...options, data})
     },
   }
 }

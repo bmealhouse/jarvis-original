@@ -9,9 +9,52 @@
     "type": "git",
     "url": "https://github.com/bmealhouse/baymax"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "xo",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "useTabs": false,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": false
+  },
+  "xo": {
+    "env": [
+      "browser"
+    ],
+    "prettier": true,
+    "extends": "xo-react",
+    "rules": {
+      "capitalized-comments": "off",
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ],
+      "react/prop-types": "off"
+    }
+  },
   "devDependencies": {
+    "eslint-config-xo-react": "0.20.0",
+    "eslint-plugin-react": "7.17.0",
+    "eslint-plugin-react-hooks": "2.3.0",
     "gatsby": "2.18.11",
-    "prettier": "1.19.1"
+    "husky": "3.1.0",
+    "lint-staged": "9.5.0",
+    "prettier": "1.19.1",
+    "xo": "0.25.3"
   },
   "scripts": {
     "start": "cd spotify-to-apple-music && yarn start",

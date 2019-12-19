@@ -1,5 +1,5 @@
 import React from 'react'
-import { createStore, StoreProvider } from 'easy-peasy'
+import {createStore, StoreProvider} from 'easy-peasy'
 import model from './src/model'
 
 document.addEventListener('musickitloaded', () => {
@@ -23,6 +23,6 @@ if (process.env.NODE_ENV === 'development') {
   }
 }
 
-export function wrapRootElement({ element }) {
+export function wrapRootElement({element}) {
   return <StoreProvider store={store}>{element}</StoreProvider>
 }

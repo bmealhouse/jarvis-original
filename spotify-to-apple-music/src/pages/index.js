@@ -10,7 +10,7 @@ export default function Index() {
         <link
           href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
           rel="stylesheet"
-        ></link>
+        />
         <script src="https://js-cdn.music.apple.com/musickit/v1/musickit.js" />
         <style type="text/css">{`
           html {

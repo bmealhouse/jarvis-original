@@ -4,6 +4,31 @@
   "description": "Transfers Spotify playlists to Apple Music library",
   "version": "1.0.0",
   "license": "MIT",
+  "prettier": {
+    "useTabs": false,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": false
+  },
+  "xo": {
+    "env": [
+      "browser"
+    ],
+    "prettier": true,
+    "extends": "xo-react",
+    "rules": {
+      "capitalized-comments": "off",
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ],
+      "react/prop-types": "off"
+    }
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "1.2.26",
     "@fortawesome/free-solid-svg-icons": "5.12.0",
@@ -18,7 +43,12 @@
   },
   "devDependencies": {
     "apple-music-token-node": "2.0.1",
-    "prettier": "1.19.1"
+    "dotenv": "8.2.0",
+    "eslint-config-xo-react": "0.20.0",
+    "eslint-plugin-react": "7.17.0",
+    "eslint-plugin-react-hooks": "2.3.0",
+    "prettier": "1.19.1",
+    "xo": "0.25.3"
   },
   "scripts": {
     "start": "gatsby develop"

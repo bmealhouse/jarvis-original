@@ -1,18 +1,19 @@
 import React from 'react'
-import { useStoreActions } from 'easy-peasy'
+import {useStoreActions} from 'easy-peasy'
 
 const button = 'border rounded mx-1 px-2 font-bold'
 
-export default function UserPlaylist({ playlist }) {
-  const { addPlaylistToLibrary, deletePlaylist } = useStoreActions(
-    actions => actions
+export default function UserPlaylist({playlist}) {
+  const {addPlaylistToLibrary, deletePlaylist} = useStoreActions(
+    actions => actions,
   )
 
-  const handleAddToLibrary = e => {
+  const handleAddToLibrary = () => {
     addPlaylistToLibrary(playlist)
   }
 
-  const handleDelete = e => {
+  const handleDelete = () => {
+    // eslint-disable-next-line no-alert
     if (window.confirm(`Are you sure you want to delete ${playlist.name}?`)) {
       deletePlaylist(playlist)
     }
@@ -30,12 +31,14 @@ export default function UserPlaylist({ playlist }) {
       </p>
       <div className="w-1/3 inline-flex">
         <button
+          type="button"
           className={`${button} hover:border-gray-900`}
           onClick={handleAddToLibrary}
         >
           Add to library
         </button>
         <button
+          type="button"
           className={`${button} hover:border-red-500`}
           onClick={handleDelete}
         >

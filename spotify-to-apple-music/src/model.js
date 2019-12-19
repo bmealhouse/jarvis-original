@@ -1,4 +1,4 @@
-import { action, thunk, computed } from 'easy-peasy'
+import {action, thunk, computed} from 'easy-peasy'
 import * as spotify from './spotify'
 import * as appleMusic from './apple-music'
 
@@ -20,20 +20,20 @@ export default {
   removePlaylist: action((state, id) => {
     state.playlists.splice(
       state.playlists.findIndex(playlist => playlist.id === id),
-      1
+      1,
     )
   }),
 
   // effects
-  fetchPlaylists: thunk(async (actions, _payload, { getStoreState }) => {
+  fetchPlaylists: thunk(async (actions, _payload, {getStoreState}) => {
     const playlists = await spotify.playlists(getStoreState)
     actions.loadPlaylists(playlists)
   }),
-  deletePlaylist: thunk(async (actions, playlist, { getStoreState }) => {
+  deletePlaylist: thunk(async (actions, playlist, {getStoreState}) => {
     await spotify.deletePlaylist(getStoreState, playlist.id)
     actions.removePlaylist(playlist.id)
   }),
-  addPlaylistToLibrary: thunk(async (actions, playlist, { getStoreState }) => {
+  addPlaylistToLibrary: thunk(async (actions, playlist, {getStoreState}) => {
     const tracks = await spotify.playlistTracks(getStoreState, playlist.id)
 
     let songs = await Promise.all(tracks.map(findAppleMusicSong))
@@ -41,6 +41,7 @@ export default {
 
     try {
       if (
+        // eslint-disable-next-line no-alert
         window.confirm(`
 Add ${songs.length} songs to your apple music library?\n
 ${songs.map(formatAppleMusicSongName).join('\n')}
@@ -52,7 +53,7 @@ ${songs.map(formatAppleMusicSongName).join('\n')}
         await appleMusic.addToLibrary(songs)
         console.log('Added songs to Apple Music library')
 
-        const { id } = await appleMusic.createPlaylist(playlist.name, songs)
+        const {id} = await appleMusic.createPlaylist(playlist.name, songs)
         console.log(`Created playlist: ${id}`)
       }
     } catch (error) {
@@ -62,14 +63,14 @@ ${songs.map(formatAppleMusicSongName).join('\n')}
 }
 
 async function findAppleMusicSong(track) {
-  const { searchTerm, ...searchTermMetadata } = buildSearchTerm(track)
+  const {searchTerm, ...searchTermMetadata} = buildSearchTerm(track)
 
   let searchResults = null
   try {
     searchResults = await appleMusic.search(searchTerm)
     return filterSearchResults(searchResults, searchTermMetadata)
   } catch (error) {
-    const { artistName, albumName, trackName } = searchTermMetadata
+    const {artistName, albumName, trackName} = searchTermMetadata
     console.error('No search results', {
       artistName,
       albumName,
@@ -122,62 +123,61 @@ function filterSearchResults(searchResults, searchTermMetadata) {
 
   remainingSearchResults = filterBy(
     `includesArtistName(${formattedArtistName})`,
-    ({ attributes: { artistName } }) =>
+    ({attributes: {artistName}}) =>
       artistName.toLowerCase().includes(formattedArtistName),
-    remainingSearchResults
+    remainingSearchResults,
   )
 
   remainingSearchResults = filterBy(
     `preferAlbumName(remastered|deluxe)`,
-    ({ attributes: { albumName } }) => {
+    ({attributes: {albumName}}) => {
       const albumNameLowerCase = albumName.toLowerCase()
       return (
         albumNameLowerCase.includes(`${formattedAlbumName} (deluxe`) ||
         albumNameLowerCase.includes(`${formattedAlbumName} (remastered`)
       )
     },
-    remainingSearchResults
+    remainingSearchResults,
   )
 
   remainingSearchResults = filterBy(
     `includesAlbumName(${formattedAlbumName})`,
-    ({ attributes: { albumName } }) =>
+    ({attributes: {albumName}}) =>
       albumName.toLowerCase().includes(formattedAlbumName),
-    remainingSearchResults
+    remainingSearchResults,
   )
 
   remainingSearchResults = filterBy(
     `includesTrackName(${formattedTrackName})`,
-    ({ attributes: { name } }) =>
-      name.toLowerCase().includes(formattedTrackName),
-    remainingSearchResults
+    ({attributes: {name}}) => name.toLowerCase().includes(formattedTrackName),
+    remainingSearchResults,
   )
 
   remainingSearchResults = filterBy(
     `excatArtistName(${formattedArtistName})`,
-    ({ attributes: { artistName } }) =>
+    ({attributes: {artistName}}) =>
       artistName.toLowerCase() === formattedArtistName,
-    remainingSearchResults
+    remainingSearchResults,
   )
 
   remainingSearchResults = filterBy(
     `exactAlbumName(${formattedAlbumName})`,
-    ({ attributes: { albumName } }) =>
+    ({attributes: {albumName}}) =>
       albumName.toLowerCase() === formattedAlbumName,
-    remainingSearchResults
+    remainingSearchResults,
   )
 
   remainingSearchResults = filterBy(
     `exactTrackName(${formattedTrackName})`,
-    ({ attributes: { name } }) => name.toLowerCase() === formattedTrackName,
-    remainingSearchResults
+    ({attributes: {name}}) => name.toLowerCase() === formattedTrackName,
+    remainingSearchResults,
   )
 
   if (remainingSearchResults.length > 1) {
     let mostGenres = 0
     return remainingSearchResults.reduce((songWithMostGenres, song) => {
       const {
-        attributes: { genreNames },
+        attributes: {genreNames},
       } = song
 
       if (genreNames.length > mostGenres) {

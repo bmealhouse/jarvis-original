@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
-import { useStoreState, useStoreActions } from 'easy-peasy'
+import React, {useEffect} from 'react'
+import {useStoreState, useStoreActions} from 'easy-peasy'
 import Playlist from './playlist'
 
 export default function UserPlaylists() {
-  const { isAuthenticated, playlists } = useStoreState(state => state)
+  const {isAuthenticated, playlists} = useStoreState(state => state)
   const fetchPlaylists = useStoreActions(actions => actions.fetchPlaylists)
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function UserPlaylists() {
     playlists && (
       <section className="flex flex-wrap px-8">
         {playlists.map(playlist => (
-          <Playlist key={playlist.id} playlist={playlist}></Playlist>
+          <Playlist key={playlist.id} playlist={playlist} />
         ))}
       </section>
     )
