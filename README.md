@@ -10,7 +10,7 @@
 - [verizon-split-bill](#verizon-split-bill)
 - [License](#license)
 
-## mn-tax-deposit
+## eftps-tax-deposit
 
 Schedules EFTPS tax deposits
 
