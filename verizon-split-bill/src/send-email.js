@@ -60,7 +60,11 @@ function generateHtml({quoteOfTheDay, bill}) {
         }</mj-text>
       </mj-column>
     </mj-section>
-    <mj-divider border-color="#d52b1e"></mj-divider>
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#d52b1e"></mj-divider>
+      </mj-column>
+    </mj-section>
     <mj-section>
       <mj-column>
         <mj-text font-family="Helvetica, Arial" font-size="22px" font-weight="bold">${
@@ -85,7 +89,11 @@ function generateHtml({quoteOfTheDay, bill}) {
         </mj-table>
       </mj-column>
     </mj-section>
-    <mj-divider border-color="#d52b1e"></mj-divider>
+    <mj-section>
+      <mj-column>
+        <mj-divider border-color="#d52b1e"></mj-divider>
+      </mj-column>
+    </mj-section>
     <mj-section>
       <mj-column>
         <mj-text font-family="Helvetica, Arial" font-size="28px" font-weight="bold" align="right">TOTAL: ${bill.totalAmount.format()}</mj-text>
