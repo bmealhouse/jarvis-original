@@ -115,20 +115,20 @@ async function main() {
 
     console.log('Validating summary of payment...')
     if (await isExactAmount(page, 'Payment Amount', paymentAmount)) {
-      // WIP
-      // console.log('Confirming summary of payment...')
-      // pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
-      // await page.click('.ModalActionBar .ActionButton:first-child')
-      // await pageTransition
-      // await page.waitForSelector('.ActionButtonMN_PF')
-      // console.log('Navigating to printer friendly version...')
-      // pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
-      // await page.click('.ActionButtonMN_PF')
-      // await pageTransition
+      console.log('Confirming summary of payment...')
+      pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
+      await page.click('.ModalActionBar .ActionButton:first-child')
+      await pageTransition
+
+      await page.waitForSelector('.ActionButtonMN_PF')
+
+      console.log('Navigating to printer friendly version...')
+      await page.click('.ActionButtonMN_PF') // WIP: this isn't being clicked; add delay?
     } else {
       console.log("  something's not quite right...")
     }
 
+    console.log('Copying filename to clipboard...')
     const month = String(new Date().getMonth() || 12).padEnd(2, '0')
     const [_date, _month, year] = selectedFilingPeriod.text.split('-')
     await clipboardy.write(`${year}-${month} MN Tax Deposit.pdf`)

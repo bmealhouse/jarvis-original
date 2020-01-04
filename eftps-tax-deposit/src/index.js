@@ -111,16 +111,20 @@ async function main() {
       (await isExactAmount(page, 'Medicare', medicare)) &&
       (await isExactAmount(page, 'Tax Withholding', taxWithholding))
     ) {
-      // pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
-      // await page.click('[value="makePayment"]')
-      // await pageTransition
-      // await page.waitForSelector('[value="printerFriendly"]')
-      // console.log('Navigating to printer friendly version...')
-      // await page.click('[value="printerFriendly"]')
+      console.log('Scheduling payment...')
+      pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
+      await page.click('[value="makePayment"]')
+      await pageTransition
+
+      await page.waitForSelector('[value="printerFriendly"]')
+
+      console.log('Navigating to printer friendly version...')
+      await page.click('[value="printerFriendly"]')
     } else {
       console.log("  something's not quite right...")
     }
 
+    console.log('Copying filename to clipboard...')
     const month = String(new Date().getMonth() || 12).padEnd(2, '0')
     await clipboardy.write(`${year}-${month} EFTPS Deposit.pdf`)
   } catch (error) {
