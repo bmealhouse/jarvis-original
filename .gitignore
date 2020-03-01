@@ -6,6 +6,6 @@ public
 # files
 *.p8
 .DS_Store
-.env.*
+.env*
 now-secrets.json
 yarn-error.log

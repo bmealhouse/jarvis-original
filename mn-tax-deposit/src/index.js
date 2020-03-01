@@ -121,9 +121,13 @@ async function main() {
       await pageTransition
 
       await page.waitForSelector('.ActionButtonMN_PF')
+      await page.waitFor(5000) // is this needed?
 
       console.log('Navigating to printer friendly version...')
-      await page.click('.ActionButtonMN_PF') // WIP: this isn't being clicked; add delay?
+      // WIP: this isn't being clicked
+      // Error: Node is either not visible or not an HTMLElement
+      // Deplay mousedown/mouseup by 100ms?
+      await page.click('.ActionButtonMN_PF', {delay: 100})
     } else {
       console.log("  something's not quite right...")
     }
@@ -131,7 +135,7 @@ async function main() {
     console.log('Copying filename to clipboard...')
     const month = String(new Date().getMonth() || 12).padEnd(2, '0')
     const [_date, _month, year] = selectedFilingPeriod.text.split('-')
-    await clipboardy.write(`${year}-${month} MN Tax Deposit.pdf`)
+    await clipboardy.write(`${year}-${month} MN Tax Deposit`)
   } catch (error) {
     console.error(error.toString())
   }

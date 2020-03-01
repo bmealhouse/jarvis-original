@@ -126,7 +126,7 @@ async function main() {
 
     console.log('Copying filename to clipboard...')
     const month = String(new Date().getMonth() || 12).padEnd(2, '0')
-    await clipboardy.write(`${year}-${month} EFTPS Deposit.pdf`)
+    await clipboardy.write(`${year}-${month} EFTPS Deposit`)
   } catch (error) {
     console.error(error.toString())
   }

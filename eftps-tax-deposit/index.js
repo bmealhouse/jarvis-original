@@ -1,7 +1,4 @@
-process.env.NODE_ENV = 'development'
-require('dotenv').config({
-  path: `.env.${process.env.NODE_ENV}`,
-})
+require('dotenv').config()
 
 // eslint-disable-next-line no-global-assign
 require = require('esm')(module)
