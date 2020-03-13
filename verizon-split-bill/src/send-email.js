@@ -4,7 +4,7 @@ import mjml2html from 'mjml'
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY)
 
 export default async data => {
-  console.log('Sending email...')
+  console.log('Sending email…')
 
   const emailMessage = {
     to: process.env.SENDGRID_TO.split(','),

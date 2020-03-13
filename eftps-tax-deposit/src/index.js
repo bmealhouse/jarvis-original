@@ -16,7 +16,7 @@ async function main() {
 
     await page.waitForSelector('[value="Login"]')
 
-    console.log('Logging in to eftps.com...')
+    console.log('Logging in to eftps.com…')
     await page.type('[name="EIN1"]', process.env.EFTPS_EIN1)
     await page.type('[name="EIN2"]', process.env.EFTPS_EIN2)
     await page.type('[name="PIN"]', process.env.EFTPS_PIN)
@@ -27,7 +27,7 @@ async function main() {
 
     await page.waitForSelector('[value="next"]')
 
-    console.log('Entering form 941...')
+    console.log('Entering form 941…')
     await page.type('#TaxForm_EditField', '941')
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('[value="next"]')
@@ -35,7 +35,7 @@ async function main() {
 
     await page.waitForSelector('[value="next"]')
 
-    console.log('Selecting federal tax deposit...')
+    console.log('Selecting federal tax deposit…')
     await page.click('[value="5"]')
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('[value="next"]')
@@ -54,7 +54,7 @@ async function main() {
 
     await page.waitForSelector('[name="singlePayment.amount.value"]')
 
-    console.log('Entering business tax payment info...')
+    console.log('Entering business tax payment info…')
     await page.type(
       '[name="singlePayment.amount.value"]',
       formatCurrency(paymentAmount),
@@ -65,7 +65,7 @@ async function main() {
     )
     await page.type('[name="singlePayment.taxPeriodYear"]', year)
 
-    console.log('Selecting settlement date...')
+    console.log('Selecting settlement date…')
     await page.click('.ui-datepicker-trigger')
     await page.click(
       '.ui-datepicker-calendar td:not(.ui-datepicker-unselectable)',
@@ -85,7 +85,7 @@ async function main() {
       '[name="singlePayment.subCategories[0].amount.value"]',
     )
 
-    console.log('Entering sub category amounts...')
+    console.log('Entering sub category amounts…')
     await page.type(
       '[name="singlePayment.subCategories[0].amount.value"]',
       formatCurrency(socialSecurity),
@@ -104,27 +104,27 @@ async function main() {
 
     await page.waitForSelector('[value="makePayment"]')
 
-    console.log('Validating payment information...')
+    console.log('Validating payment information…')
     if (
       (await isExactAmount(page, 'Payment Amount', paymentAmount)) &&
       (await isExactAmount(page, 'Social Security', socialSecurity)) &&
       (await isExactAmount(page, 'Medicare', medicare)) &&
       (await isExactAmount(page, 'Tax Withholding', taxWithholding))
     ) {
-      console.log('Scheduling payment...')
+      console.log('Scheduling payment…')
       pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
       await page.click('[value="makePayment"]')
       await pageTransition
 
       await page.waitForSelector('[value="printerFriendly"]')
 
-      console.log('Navigating to printer friendly version...')
+      console.log('Navigating to printer friendly version…')
       await page.click('[value="printerFriendly"]')
     } else {
-      console.log("  something's not quite right...")
+      console.log('  something’s not quite right…')
     }
 
-    console.log('Copying filename to clipboard...')
+    console.log('Copying filename to clipboard…')
     const month = String(new Date().getMonth() || 12).padEnd(2, '0')
     await clipboardy.write(`${year}-${month} EFTPS Deposit`)
   } catch (error) {

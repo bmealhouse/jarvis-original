@@ -18,7 +18,7 @@ async function main() {
     await page.goto(VZW_VIEWPAYBILL_URL, {waitUntil: 'networkidle0'})
     await page.waitForSelector('#login-form')
 
-    console.log('Logging in to verizonwireless.com...')
+    console.log('Logging in to verizonwireless.com…')
     await page.type('#IDToken1', process.env.VZW_USERNAME)
     await page.type('#IDToken2', process.env.VZW_PASSWORD)
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
@@ -28,7 +28,7 @@ async function main() {
     try {
       await page.waitForSelector('#challengequestion')
 
-      console.log('Answering security question...')
+      console.log('Answering security question…')
       await page.type('#IDToken1', process.env.VZW_SECRET_ANSWER)
       await page.click('#rememberComputer') // uncheck rememeber me checkbox
       pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
@@ -36,13 +36,13 @@ async function main() {
       await pageTransition
     } catch {}
 
-    console.log('Waiting for successful login...')
+    console.log('Waiting for successful login…')
     await page.waitForSelector('#quickUpdatesSection')
 
-    console.log('Fetching summary data...')
+    console.log('Fetching summary data…')
     const {balanceText, billDate} = await fetchSummaryData(browser)
 
-    console.log('Fetching bill details...')
+    console.log('Fetching bill details…')
     const {totalAmount, planAmount, lineLevelDetails} = await fetchBillDetails(
       browser,
       billDate,
@@ -57,7 +57,7 @@ async function main() {
       lineLevelDetails,
     })
 
-    console.log('Fetching quote of the day...')
+    console.log('Fetching quote of the day…')
     const quoteOfTheDay = await fetchQuoteOfTheDay()
     await sendEmail({bill, quoteOfTheDay})
   } catch (error) {
@@ -76,7 +76,7 @@ async function fetchSummaryData(browser) {
       data: {CURRENT_BILLING_FULL_MONTH, curBillDate},
       cq: {balanceTxt},
     },
-  } = JSON.parse(await summaryTab.$eval('pre', el => el.textContent))
+  } = JSON.parse(await summaryTab.$eval('pre', element => element.textContent))
 
   const billDate = new Date(curBillDate)
   const [month, date, year] = [
@@ -103,7 +103,7 @@ async function fetchBillDetails(browser, billDate) {
       accountSummaryDetails: [{value: planAmount}],
       lineLevelDetails,
     },
-  } = JSON.parse(await detailsTab.$eval('pre', el => el.textContent))
+  } = JSON.parse(await detailsTab.$eval('pre', element => element.textContent))
 
   return {
     totalAmount: total,
@@ -113,6 +113,9 @@ async function fetchBillDetails(browser, billDate) {
 }
 
 async function fetchQuoteOfTheDay() {
-  const res = await axios.get('http://quotes.rest/qod.json?category=inspire')
-  return res.data.contents.quotes[0]
+  const response = await axios.get(
+    'http://quotes.rest/qod.json?category=inspire',
+  )
+
+  return response.data.contents.quotes[0]
 }

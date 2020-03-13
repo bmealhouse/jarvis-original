@@ -15,7 +15,7 @@ async function main() {
 
     await page.waitForSelector('#d-8')
 
-    console.log('Logging in to mndor.state.mn.us...')
+    console.log('Logging in to mndor.state.mn.us…')
     await page.type('#d-6', process.env.MNDOR_USERNAME)
     await page.type('#d-7', process.env.MNDOR_PASSWORD)
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
@@ -24,7 +24,7 @@ async function main() {
 
     await page.waitForSelector('#c-8')
 
-    console.log('Sending text message...')
+    console.log('Sending text message…')
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('#c-8')
     await pageTransition
@@ -36,7 +36,7 @@ async function main() {
 
     await page.waitForSelector('#c-o')
 
-    console.log('Entering verification code...')
+    console.log('Entering verification code…')
     await page.type('#c-m', verificationCode)
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('#c-o')
@@ -44,28 +44,28 @@ async function main() {
 
     await page.waitForSelector('#l_y-1-1')
 
-    console.log('Navigating to manage payments...')
+    console.log('Navigating to manage payments…')
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('#l_y-1-1')
     await pageTransition
 
     await page.waitForSelector('#l_g-1-1')
 
-    console.log('  for a specific account...')
+    console.log('  for a specific account…')
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('#l_g-1-1')
     await pageTransition
 
     await page.waitForSelector('#c-7')
 
-    console.log('Selecting withholding tax account...')
+    console.log('Selecting withholding tax account…')
     await page.click('#c-7')
     await page.select('#c-7', 'WTH')
 
     await page.waitForSelector('#c-s tbody > tr')
 
     const filingPeriods = await page.$$eval('#c-s .CellDate a', cellDates =>
-      cellDates.map(el => ({id: el.id, text: el.textContent})),
+      cellDates.map(element => ({id: element.id, text: element.textContent})),
     )
 
     const {filingPeriod} = await inquirer.prompt([
@@ -81,21 +81,21 @@ async function main() {
       ({text}) => text === filingPeriod,
     )
 
-    console.log(`Selecting ${selectedFilingPeriod.text}...`)
+    console.log(`Selecting ${selectedFilingPeriod.text}…`)
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click(`#${selectedFilingPeriod.id}`)
     await pageTransition
 
     await page.waitForSelector('#l_m-1-2')
 
-    console.log('Navigating to make a payment...')
+    console.log('Navigating to make a payment…')
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('#l_m-1-2')
     await pageTransition
 
     await page.waitForSelector('#l_c-a-4')
 
-    console.log('Navigating to withholding deposit...')
+    console.log('Navigating to withholding deposit…')
     pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
     await page.click('#l_c-a-4')
     await pageTransition
@@ -106,16 +106,16 @@ async function main() {
 
     await page.waitForSelector('#c-2')
 
-    console.log('Entering payment amount...')
+    console.log('Entering payment amount…')
     await page.type('#c-x1', paymentAmount)
     await page.type('#c-y1', paymentAmount)
     await page.click('.ActionBarBottom .ActionButtonSubmit')
 
     await page.waitForSelector('.ConfirmationDialog')
 
-    console.log('Validating summary of payment...')
+    console.log('Validating summary of payment…')
     if (await isExactAmount(page, 'Payment Amount', paymentAmount)) {
-      console.log('Confirming summary of payment...')
+      console.log('Confirming summary of payment…')
       pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
       await page.click('.ModalActionBar .ActionButton:first-child')
       await pageTransition
@@ -123,16 +123,16 @@ async function main() {
       await page.waitForSelector('.ActionButtonMN_PF')
       await page.waitFor(5000) // is this needed?
 
-      console.log('Navigating to printer friendly version...')
+      console.log('Navigating to printer friendly version…')
       // WIP: this isn't being clicked
       // Error: Node is either not visible or not an HTMLElement
       // Deplay mousedown/mouseup by 100ms?
       await page.click('.ActionButtonMN_PF', {delay: 100})
     } else {
-      console.log("  something's not quite right...")
+      console.log('  something’s not quite right…')
     }
 
-    console.log('Copying filename to clipboard...')
+    console.log('Copying filename to clipboard…')
     const month = String(new Date().getMonth() || 12).padEnd(2, '0')
     const [_date, _month, year] = selectedFilingPeriod.text.split('-')
     await clipboardy.write(`${year}-${month} MN Tax Deposit`)
