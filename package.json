@@ -65,6 +65,7 @@
   "scripts": {
     "start:eftpstd": "cd eftps-tax-deposit && yarn start",
     "start:mntd": "cd mn-tax-deposit && yarn start",
+    "start:sbot": "cd simple-bot && yarn start",
     "start:stam": "cd spotify-to-apple-music && yarn start",
     "start:vsb": "cd verizon-split-bill && yarn start"
   }
