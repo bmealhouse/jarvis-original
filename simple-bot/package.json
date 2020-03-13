@@ -1,0 +1,46 @@
+{
+  "private": true,
+  "name": "simple-bot",
+  "version": "1.0.0",
+  "description": "Organize finances in Simple based on a set of rules",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "prettier": {
+    "useTabs": false,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": false
+  },
+  "xo": {
+    "prettier": true,
+    "rules": {
+      "capitalized-comments": "off",
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ],
+      "unicorn/string-content": "off"
+    }
+  },
+  "dependencies": {
+    "dotenv": "8.2.0",
+    "inquirer": "7.1.0",
+    "puppeteer": "2.1.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "6.5.0",
+    "@types/puppeteer": "2.0.1",
+    "prettier": "1.19.1",
+    "ts-node": "8.6.2",
+    "typescript": "3.8.3",
+    "webpack": "4.42.0",
+    "xo": "0.28.0"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  }
+}

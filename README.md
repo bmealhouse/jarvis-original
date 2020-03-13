@@ -6,6 +6,7 @@
 
 - [eftps-tax-deposit](#eftps-tax-deposit)
 - [mn-tax-deposit](#mn-tax-deposit)
+- [simple-bot](#simple-bot)
 - [spotify-to-apple-music](#spotify-to-apple-music)
 - [verizon-split-bill](#verizon-split-bill)
 - [License](#license)
@@ -24,6 +25,14 @@ Schedules MN tax deposits
 
 ```shell
 yarn start:mntd
+```
+
+## simple-bot
+
+Organize finances in Simple based on a set of rules.
+
+```shell
+yarn start:sbot
 ```
 
 ## spotify-to-apple-music
