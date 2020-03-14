@@ -62,7 +62,7 @@ export namespace Simple {
     // Activities = 'Activities',
     // Allowance = 'Allowance',
     // BabySupplies = 'Baby Supplies',
-    // Childcare = 'Childcare',
+    Childcare = 'Childcare',
     // KidsClothing = 'Kids Clothing',
     // KidsEducation = 'Kids Education',
     // Toys = 'Toys',
@@ -92,7 +92,7 @@ export namespace Simple {
     // Financial
     // Accounting = 'Accounting',
     // FinancialAdvice = 'Financial Advice',
-    // LifeInsurance = 'Life Insurnace',
+    LifeInsurance = 'Life Insurance',
     // Loan = 'Loan',
     // LoanPayment = 'Loan Payment',
     // MoneyTransfers = 'Money Transfers',
@@ -176,7 +176,7 @@ export namespace Simple {
 
     // Office
     // Equipment = 'Equipment',
-    // PostageAndShipping = 'Postage & Shipping',
+    PostageAndShipping = 'Postage & Shipping',
     // OfficeSupplies = 'Office Supplies',
     // OtherOffice = 'Other Office',
 
@@ -244,7 +244,7 @@ export namespace Simple {
     GasAndFuel = 'Gas & Fuel',
     Internet = 'Internet',
     // OtherUtilities = 'Other Utilities',
-    // Phone = 'Phone',
+    Phone = 'Phone',
     Trash = 'Trash',
     // WaterAndSewer = 'Water & Sewer',
   }

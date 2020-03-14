@@ -1,69 +1,76 @@
-// import puppeteer from 'puppeteer'
-// import inquirer from 'inquirer'
+import {config} from 'dotenv'
+import puppeteer from 'puppeteer'
+import inquirer from 'inquirer'
 import {TransactionUpdate} from '../types'
 import Goals from './config/simple-goals'
 import Rules from './config/simple-rules'
 import transactions from './config/simple-transactions'
+import {updateTransaction} from './utils'
+
+config()
 
 const dryRun = true
 
 main()
 async function main(): Promise<void> {
   try {
-    // let pageTransition = null
+    let pageTransition = null
 
-    // const browser = await puppeteer.launch({
-    //   devtools: true,
-    //   headless: false,
-    //   slowMo: 50,
-    //   defaultViewport: {
-    //     width: 1280,
-    //     height: 1000,
-    //   },
-    // })
+    const browser = await puppeteer.launch({
+      devtools: true,
+      headless: false,
+      slowMo: 50,
+      defaultViewport: {
+        width: 1280,
+        height: 1000,
+      },
+    })
 
-    // const page = await browser.newPage()
-    // await page.goto('https://signin.simple.com', {waitUntil: 'networkidle0'})
-    // await page.waitForSelector('#login')
+    const page = await browser.newPage()
 
-    // console.log('Logging in to simple.com…')
-    // await page.type('#login_username', process.env.SIMPLE_USERNAME)
-    // await page.type('#login_password', process.env.SIMPLE_PASSWORD)
-    // pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
-    // await page.click('#signin-btn')
-    // await pageTransition
+    if (!dryRun) {
+      await page.goto('https://signin.simple.com', {waitUntil: 'networkidle0'})
+      await page.waitForSelector('#login')
 
-    // // prompt for verification code
-    // const {verificationCode} = await inquirer.prompt([
-    //   {name: 'verificationCode', message: 'Verification code:'},
-    // ])
+      console.log('Logging in to simple.com…')
+      await page.type('#login_username', process.env.SIMPLE_USERNAME!)
+      await page.type('#login_password', process.env.SIMPLE_PASSWORD!)
+      pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
+      await page.click('#signin-btn')
+      await pageTransition
 
-    // await page.waitForSelector('#login-2fa')
+      // prompt for verification code
+      const {verificationCode} = await inquirer.prompt([
+        {name: 'verificationCode', message: 'Verification code:'},
+      ])
 
-    // console.log('Entering verification code…')
-    // await page.type('#login-2fa input[name="pin"]', verificationCode)
-    // pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
-    // await page.click('#login-2fa button[type="submit"]')
-    // await pageTransition
+      await page.waitForSelector('#login-2fa')
 
-    // console.log('Waiting for successful login…')
-    // await page.waitForSelector('.balances')
+      console.log('Entering verification code…')
+      await page.type('#login-2fa input[name="pin"]', verificationCode)
+      pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
+      await page.click('#login-2fa button[type="submit"]')
+      await pageTransition
 
-    // let transactions = []
-    // page.on('requestfinished', async request => {
-    //   const url = request.url()
-    //   if (url.includes('/transactions-gather')) {
-    //     const response = request.response()
-    //     if (response.ok()) {
-    //       transactions = await response.json()
-    //     }
-    //   }
-    // })
+      console.log('Waiting for successful login…')
+      await page.waitForSelector('.balances')
 
-    // console.log('Filtering activity by all time…')
-    // await page.click('.filter-expand')
-    // await page.select('.time-span-options > select', 'all')
-    // await page.waitForSelector('main:not(.-loading)')
+      // let transactions = []
+      // page.on('requestfinished', async request => {
+      //   const url = request.url()
+      //   if (url.includes('/transactions-gather')) {
+      //     const response = request.response()
+      //     if (response.ok()) {
+      //       transactions = await response.json()
+      //     }
+      //   }
+      // })
+
+      console.log('Filtering activity by all time…')
+      await page.click('.filter-expand')
+      await page.select('.time-span-options > select', 'all')
+      await page.waitForSelector('main:not(.-loading)')
+    }
 
     console.log('Processing transactions…')
 
@@ -88,7 +95,7 @@ async function main(): Promise<void> {
       }
 
       // check if transaction should be skipped
-      if (memo.toLowerCase().includes('#skip')) {
+      if (memo.includes('#skip') || memo.includes('#todo')) {
         continue
       }
 
@@ -96,26 +103,28 @@ async function main(): Promise<void> {
       const [, rules] =
         Object.entries(Rules).find(
           ([text]) =>
-            description.toLowerCase().includes(text) ||
-            rawDescription.toLowerCase().includes(text),
+            description.toUpperCase().includes(text) ||
+            rawDescription.toUpperCase().includes(text),
         ) ?? []
 
       // when no rules are found, ensure the todo memo has been appended
       if (!rules) {
-        if (!memo.toLowerCase().includes('#todo')) {
-          transactionUpdates.push({
-            applyMemo: '#todo',
-            transaction,
-          })
-        }
-
+        transactionUpdates.push({applyMemo: '#todo', transaction})
         continue
       }
 
       // find rule based on where condition (if applicable)
       const rule = rules.find(rule => {
         if (rule.amountEquals) {
-          return rule.amountEquals === amount
+          return amount === rule.amountEquals
+        }
+
+        if (rule.amountGreaterThan) {
+          return amount > rule.amountGreaterThan
+        }
+
+        if (rule.amountLessThan) {
+          return amount < rule.amountLessThan
         }
 
         if (rule.recordedAfter) {
@@ -154,13 +163,7 @@ async function main(): Promise<void> {
 
       // when no rule is found, ensure the todo memo has been appended
       if (!rule) {
-        if (!memo.toLowerCase().includes('#todo')) {
-          transactionUpdates.push({
-            applyMemo: '#todo',
-            transaction,
-          })
-        }
-
+        transactionUpdates.push({applyMemo: '#todo', transaction})
         continue
       }
 
@@ -179,10 +182,7 @@ async function main(): Promise<void> {
       }
 
       // does the memo include rule's memo text (optional)
-      if (
-        rule.applyMemo &&
-        !memo.toLowerCase().includes(rule.applyMemo.toLowerCase())
-      ) {
+      if (rule.applyMemo && memo !== rule.applyMemo) {
         transactionUpdate.applyMemo = rule.applyMemo
       }
 
@@ -194,7 +194,16 @@ async function main(): Promise<void> {
 
     if (dryRun) {
       showDryRun(transactionUpdates)
+      await browser.close()
+      return
     }
+
+    const [first, second] = transactionUpdates
+    const updates = [first, second]
+
+    await Promise.all(
+      updates.map(async update => updateTransaction(page, update)),
+    )
 
     // console.log('Processing transactions…')
     // await page.$$eval('.transaction', transaction => {
@@ -206,7 +215,7 @@ async function main(): Promise<void> {
 }
 
 function showDryRun(transactionUpdates: TransactionUpdate[]): void {
-  let skip = 31
+  let skip = 0
 
   for (const {transaction, ...updates} of transactionUpdates) {
     if (skip > 0) {

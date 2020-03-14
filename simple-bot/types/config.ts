@@ -27,6 +27,8 @@ export namespace Config {
   //   03/01 === March 1st, {{year of transaction}}
   export interface TransactionRule {
     amountEquals?: number
+    amountGreaterThan?: number
+    amountLessThan?: number
     recordedAfter?: string
     recordedBetween?: [string, string]
     applyCategory?: Simple.Category
