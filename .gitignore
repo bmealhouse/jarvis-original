@@ -4,6 +4,7 @@ node_modules
 public
 
 # files
+*.lockout
 *.p8
 .DS_Store
 .env*
