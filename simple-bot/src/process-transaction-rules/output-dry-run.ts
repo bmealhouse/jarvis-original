@@ -1,5 +1,6 @@
-import Goals from './config/simple-goals'
-import {TransactionUpdate} from '../types'
+import * as chalk from 'chalk'
+import {TransactionUpdate} from '../../types'
+import Goals from '../config/simple-goals'
 
 let skip = 0
 
@@ -12,15 +13,16 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
 
     const {
       amounts: {amount},
-      associated_goal_info: {name: associatedGoal = ''} = {},
+      associated_goal_info: {name: associatedGoalName = ''} = {},
       categories: [category],
       description,
       memo = '',
       times: {when_recorded_local: recordedLocalTime},
     } = transaction
 
+    const formattedAmount = chalk.greenBright(`$${amount / 100 / 100}`)
     console.log(
-      `\n${recordedLocalTime} ${description} ($${amount / 100 / 100})`,
+      `\n${recordedLocalTime} ${description.toUpperCase()} (${formattedAmount})`,
     )
 
     if (updates.applyCategory) {
@@ -32,23 +34,27 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
     }
 
     if (updates.applyGoal) {
-      if (associatedGoal) {
+      if (associatedGoalName) {
         console.log(
-          `   Update goal: ${associatedGoal} >>> ${
+          `   Update goal: ${associatedGoalName} >>> ${
             Goals.LookupById[updates.applyGoal]
           } (ensure this is working)`,
         )
       } else {
         console.log(`   Apply goal: ${Goals.LookupById[updates.applyGoal]}`)
       }
-    } else if (associatedGoal) {
-      console.log(`   Goal: ${associatedGoal}`)
+    } else if (associatedGoalName) {
+      console.log(`   Goal: ${associatedGoalName}`)
     }
 
-    if (updates.applyMemo) {
-      console.log(`   Apply memo: ${updates.applyMemo}`)
+    if (updates.applyMemo !== undefined) {
+      if (updates.applyMemo.length > 0) {
+        console.log(`   Apply memo: ${updates.applyMemo}`)
+      } else {
+        console.log(`   Remove memo: ${memo}`)
+      }
     } else if (memo) {
-      console.log(`   Memo: ${memo} (ensure this is working)`)
+      console.log(`   Memo: ${memo}`)
     }
   }
 }

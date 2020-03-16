@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer'
+import * as puppeteer from 'puppeteer'
 
 export default async (
   page: puppeteer.Page,

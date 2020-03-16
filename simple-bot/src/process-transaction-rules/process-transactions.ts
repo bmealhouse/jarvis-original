@@ -1,6 +1,6 @@
-import Rules from './config/simple-rules'
-import simpleTransactions from './config/simple-transactions'
-import {Simple, TransactionUpdate} from '../types'
+import {Simple, TransactionUpdate} from '../../types'
+import simpleRules from '../config/simple-rules'
+import simpleTransactions from '../config/simple-transactions'
 
 export default (
   transactions: Simple.Transaction[] = simpleTransactions,
@@ -10,35 +10,35 @@ export default (
   for (const transaction of transactions) {
     const {
       amounts: {amount},
+      associated_goal_info: {reference: associatedGoalReference} = {},
       categories: [category],
       description,
-      goal_id: goalId,
       raw_description: rawDescription,
       memo = '',
       times: {when_recorded_local: recordedLocalTime},
     } = transaction
 
     // check if transaction should be skipped
-    if (memo.includes('#skip') || memo.includes('#todo')) {
+    if (memo.includes('#skip')) {
       continue
     }
 
     // find rules based on transaction description text
-    const [, rules] =
-      Object.entries(Rules).find(
+    const [, transactionRules] =
+      Object.entries(simpleRules).find(
         ([text]) =>
           description.toUpperCase().includes(text) ||
           rawDescription.toUpperCase().includes(text),
       ) ?? []
 
     // when no rules are found, ensure the todo memo has been appended
-    if (!rules) {
+    if (!transactionRules) {
       transactionUpdates.push({applyMemo: '#todo', transaction})
       continue
     }
 
     // find rule based on where condition (if applicable)
-    const rule = rules.find(rule => {
+    const rule = transactionRules.find(rule => {
       if (rule.amountEquals) {
         return amount === rule.amountEquals
       }
@@ -101,15 +101,15 @@ export default (
     }
 
     // does the goal ID match the rule's goal (optional)
-    if (rule.applyGoal && rule.applyGoal !== goalId) {
+    if (rule.applyGoal && rule.applyGoal !== associatedGoalReference) {
       transactionUpdate.applyGoal = rule.applyGoal
     }
-
-    // TODO: if transaction has memo and rule doesn't, remove memo
 
     // does the memo include rule's memo text (optional)
     if (rule.applyMemo && memo !== rule.applyMemo) {
       transactionUpdate.applyMemo = rule.applyMemo
+    } else if (memo && rule.applyMemo === undefined) {
+      transactionUpdate.applyMemo = ''
     }
 
     // only apply updates to transactions that have changes

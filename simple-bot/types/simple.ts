@@ -4,6 +4,7 @@ export namespace Simple {
     cleared: number
     fees: number
     cashback: number
+    tip?: number
     base: number
   }
 
@@ -15,9 +16,10 @@ export namespace Simple {
     reference: string
     association_type: AssociationType
     color: Color
+    error_message?: string
   }
 
-  type AssociationType = 'AUTOMATIC' | 'MANUAL'
+  type AssociationType = 'AUTOMATIC' | 'FAILED_AUTOMATIC_NSF' | 'MANUAL'
 
   interface Attachment {
     original: string
@@ -71,7 +73,7 @@ export namespace Simple {
     // Art = 'Art',
     // Books = 'Books',
     // Dance = 'Dance',
-    // Games = 'Games',
+    Games = 'Games',
     // Movies = 'Movies',
     // Music = 'Music',
     // News = 'News',
@@ -95,7 +97,7 @@ export namespace Simple {
     LifeInsurance = 'Life Insurance',
     // Loan = 'Loan',
     // LoanPayment = 'Loan Payment',
-    // MoneyTransfers = 'Money Transfers',
+    MoneyTransfers = 'Money Transfers',
     // OtherFinancial = 'Other Financial',
     // TaxPreparation = 'Tax Preparation',
     // TaxesFedral = 'Taxes, Fedral',
@@ -114,18 +116,18 @@ export namespace Simple {
 
     // Food & Drink
     // AlcoholAndBars = 'Alcohol & Bars',
-    // CoffeeAndTea = 'Coffee & Tea',
+    CoffeeAndTea = 'Coffee & Tea',
     // Dessert = 'Dessert',
     FastFood = 'Fast Food',
     // Groceries = 'Groceries',
     // OtherFoodAndDrink = 'Other Food & Drink',
-    // Restaurants = 'Restaurants',
+    Restaurants = 'Restaurants',
     // Snacks = 'Snacks',
     // Tobacco = 'Tobacco',
 
     // Gifts & Donations
     // Charities = 'Charities',
-    // Gifts = 'Gifts',
+    Gifts = 'Gifts',
 
     // Health & Medical
     // CareFacilities = 'Care Facilities',
@@ -145,7 +147,7 @@ export namespace Simple {
     // HomeServices = 'Home Services',
     HomeSupplies = 'Home Supplies',
     // RepairsAndImprovement = 'Repairs & Improvement',
-    // LawnGarden = 'Lawn & Garden',
+    LawnAndGarden = 'Lawn & Garden',
     Mortgage = 'Mortgage',
     // Moving = 'Moving',
     // OtherHome = 'Other Home',
@@ -187,7 +189,7 @@ export namespace Simple {
     // Clothing = 'Clothing',
     Counseling = 'Counseling',
     Hair = 'Hair',
-    // Hobbies = 'Hobbies',
+    Hobbies = 'Hobbies',
     // Jewelry = 'Jewelry',
     // Laundry = 'Laundry',
     // OtherPersonal = 'Other Personal',
@@ -197,9 +199,9 @@ export namespace Simple {
 
     // Pets
     // PetFood = 'Pet Food',
-    // PetGrooming = 'Pet Grooming',
+    PetGrooming = 'Pet Grooming',
     // PetMedicine = 'Pet Medicine',
-    // PetSupplies = 'Pet Supplies',
+    PetSupplies = 'Pet Supplies',
     // Veterinarian = 'Veterinarian',
 
     // Technology
@@ -225,7 +227,7 @@ export namespace Simple {
 
     // Travel
     // CarRentals = 'Car Rentals',
-    // Flights = 'Flights',
+    Flights = 'Flights',
     // Hotels = 'Hotels',
     // ToursAndCruises = 'Tours & Cruises',
     // Train = 'Train',
@@ -267,7 +269,7 @@ export namespace Simple {
   interface Geo {
     street?: string
     city: string
-    state: string
+    state?: string
     country?: string
     zip: string
     lat?: number
@@ -320,12 +322,21 @@ export namespace Simple {
 
   type TransactionType =
     | 'ach'
+    | 'argo_debit_reversal'
     | 'atm_withdrawal'
+    | 'bill_payment'
+    | 'check_deposit'
+    | 'check_order_charge'
     | 'check_purchase'
     | 'deposit'
+    | 'fee'
+    | 'force_paid'
     | 'interest_credit'
     | 'pin_purchase'
     | 'protected_goal_account_transfer'
+    | 'refund'
     | 'shared_transfer'
+    | 'signature_credit'
     | 'signature_purchase'
+    | 'wire_transfer'
 }

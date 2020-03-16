@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "Organize finances in Simple based on a set of rules",
   "license": "MIT",
-  "main": "src/index.ts",
   "prettier": {
     "useTabs": false,
     "semi": false,
@@ -27,6 +26,8 @@
     }
   },
   "dependencies": {
+    "chalk": "3.0.0",
+    "dayjs": "1.8.22",
     "dotenv": "8.2.0",
     "inquirer": "7.1.0",
     "puppeteer": "2.1.1"
@@ -42,6 +43,8 @@
     "xo": "0.28.0"
   },
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "yarn process-transaction-rules",
+    "process-transaction-rules": "ts-node src/process-transaction-rules/index.ts",
+    "record-transactions": "ts-node src/record-transactions/index.ts"
   }
 }
