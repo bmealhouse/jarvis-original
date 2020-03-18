@@ -1,5 +1,6 @@
 import * as puppeteer from 'puppeteer'
 import {TransactionUpdate} from '../../types'
+import {goalSettingsById} from '../config/simple-goals'
 import clearText from './clear-text'
 
 export default async (
@@ -37,29 +38,83 @@ export default async (
     console.log('  selecting first category in the filted list…')
     await page.click('.amounts-list button')
 
-    // do not remember this transaction edit
-    console.log('  selecting do not remember this transaction edit…')
-    await page.click('input#remember-edit-no')
+    try {
+      const saveButton = await page.waitForSelector(
+        '.field-alert-transition-group button',
+        {timeout: 1000},
+      )
 
-    // click save button
-    console.log('  clicking the save button…')
-    await Promise.all([
-      page.waitForNavigation({waitUntil: 'networkidle0'}),
-      page.click('.field-alert-transition-group button'),
-    ])
+      // do not remember this transaction edit
+      console.log('  selecting do not remember this transaction edit…')
+      await page.click('input#remember-edit-no')
+
+      // click save button
+      console.log('  clicking the save button…')
+      await Promise.all([
+        page.waitForNavigation({waitUntil: 'networkidle0'}),
+        saveButton.click(),
+      ])
+    } catch {}
+
+    // wait for transaction to refresh
+    console.log('  waiting for transaction to refresh…')
+    await page.waitForSelector('.transactions-refresh-notice', {
+      hidden: true,
+    })
   }
 
   if (applyGoal) {
     // click change goal button
-    const changeGoalButton = null
+    console.log('  clicking change goal button…')
+    await Promise.all([
+      page.waitForNavigation({waitUntil: 'networkidle0'}),
+      page.click(`.change-option a[href*="${transaction.uuid}/goal"]`),
+    ])
 
-    console.log('apply goal')
+    // filter categories by text
+    console.log('  waiting for goals filter text box…')
+    const goalsFilterTextBox = await page.waitForSelector(
+      '.sidebar-filtered-list input[type="text"]',
+    )
+    console.log('  typing text to filter by…')
+    await goalsFilterTextBox.type(goalSettingsById[applyGoal].filterText)
+
+    // select first goal in the filtered list
+    console.log('  selecting first category in the filted list…')
+    await Promise.all([
+      page.waitForNavigation({waitUntil: 'networkidle0'}),
+      page.click('.amounts-list button'),
+    ])
+
+    // wait for transaction to refresh
+    console.log('  waiting for transaction to refresh…')
+    await page.waitForSelector('.transactions-refresh-notice', {
+      hidden: true,
+    })
   }
 
   if (applyMemo !== undefined) {
     // click change memo button
-    console.log('  clicking change memo button…')
-    await page.click('.sidebar-main > div > div:nth-child(7) button')
+    let changeMemoButton = null
+    try {
+      changeMemoButton = await page.waitForSelector(
+        '.sidebar-main > div > div:nth-child(7) button',
+        {visible: true, timeout: 1000},
+      )
+      console.log('  clicking change memo button…')
+      await changeMemoButton.click()
+    } catch {}
+
+    if (!changeMemoButton) {
+      try {
+        changeMemoButton = await page.waitForSelector(
+          '.sidebar-main > div > div:nth-child(6) button',
+          {visible: true, timeout: 1000},
+        )
+        console.log('  clicking change memo button…')
+        await changeMemoButton.click()
+      } catch {}
+    }
 
     // type memo text
     console.log('  clearing the memo text box…')
@@ -72,8 +127,17 @@ export default async (
     // click save button
     console.log('  clicking save button…')
     await page.click('button[type="submit"]')
+
+    // wait for memo to change
+    console.log('  waiting for memo to save…')
+    await page.waitForSelector('button[type="submit"]', {
+      hidden: true,
+    })
+
+    // wait for transaction to refresh
+    console.log('  waiting for transaction to refresh…')
+    await page.waitForSelector('.transactions-refresh-notice', {
+      hidden: true,
+    })
   }
 }
-
-// TimeoutError: waiting for selector ".change-option a[href*="ba25500a-d7f7-3713-b14a-2b05ca5151b2/category"]" failed: timeout 30000ms exceeded
-// Error: No node found for selector: .sidebar-filtered-list input[type="text"]

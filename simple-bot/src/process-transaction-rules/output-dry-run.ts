@@ -1,60 +1,95 @@
 import * as chalk from 'chalk'
+import * as dayjs from 'dayjs'
 import {TransactionUpdate} from '../../types'
-import Goals from '../config/simple-goals'
+import {goalSettingsById} from '../config/simple-goals'
 
-let skip = 0
+const config = {
+  skip: 0,
+  take: 10,
+}
 
 export default (transactionUpdates: TransactionUpdate[]): void => {
   for (const {transaction, ...updates} of transactionUpdates) {
-    if (skip > 0) {
-      skip -= 1
+    if (config.skip > 0) {
+      config.skip -= 1
       continue
     }
 
+    if (config.take > 0) {
+      config.take -= 1
+    } else {
+      return
+    }
+
     const {
-      amounts: {amount},
-      associated_goal_info: {name: associatedGoalName = ''} = {},
-      categories: [category],
+      bookkeeping_type: bookkeepingType,
       description,
       memo = '',
+      categories: [category],
+      geo = {},
       times: {when_recorded_local: recordedLocalTime},
+      amounts: {amount},
+      associated_goal_info: {name: associatedGoalName = ''} = {},
     } = transaction
 
-    const formattedAmount = chalk.greenBright(`$${amount / 100 / 100}`)
-    console.log(
-      `\n${recordedLocalTime} ${description.toUpperCase()} (${formattedAmount})`,
+    const formattedDate = chalk.gray(
+      dayjs(recordedLocalTime).format('MM/DD/YYYY @ hh:mma'),
     )
+
+    const formattedAmount = `${chalk.dim('(')}${
+      bookkeepingType === 'debit'
+        ? chalk.redBright(`-$${amount / 100 / 100}`)
+        : chalk.greenBright(`+$${amount / 100 / 100}`)
+    }${chalk.dim(')')}`
+
+    console.log(
+      `\n${formattedDate} ${description.toUpperCase()} ${formattedAmount}`,
+    )
+
+    if (Object.keys(geo).length > 0) {
+      console.log(chalk.gray(JSON.stringify(geo)))
+    }
 
     if (updates.applyCategory) {
       console.log(
-        `   Update category: ${category.name} >>> ${updates.applyCategory}`,
+        chalk.yellowBright(
+          `   Update category: ${category.name} >>> ${updates.applyCategory}`,
+        ),
       )
     } else {
-      console.log(`   Category: ${category.name}`)
+      console.log(chalk.dim(`   Category: ${category.name}`))
     }
 
     if (updates.applyGoal) {
       if (associatedGoalName) {
         console.log(
-          `   Update goal: ${associatedGoalName} >>> ${
-            Goals.LookupById[updates.applyGoal]
-          } (ensure this is working)`,
+          chalk.yellowBright(
+            `   Update goal: ${associatedGoalName} >>> ${
+              goalSettingsById[updates.applyGoal].displayText
+            } (ensure this is working)`,
+          ),
         )
       } else {
-        console.log(`   Apply goal: ${Goals.LookupById[updates.applyGoal]}`)
+        console.log(
+          chalk.greenBright(
+            `   Apply goal: ${goalSettingsById[updates.applyGoal].displayText}`,
+          ),
+        )
       }
     } else if (associatedGoalName) {
-      console.log(`   Goal: ${associatedGoalName}`)
+      console.log(chalk.dim(`   Goal: ${associatedGoalName}`))
     }
 
     if (updates.applyMemo !== undefined) {
       if (updates.applyMemo.length > 0) {
-        console.log(`   Apply memo: ${updates.applyMemo}`)
+        console.log(chalk.greenBright(`   Apply memo: ${updates.applyMemo}`))
       } else {
-        console.log(`   Remove memo: ${memo}`)
+        console.log(chalk.redBright(`   Remove memo: ${memo}`))
       }
     } else if (memo) {
-      console.log(`   Memo: ${memo}`)
+      console.log(chalk.dim(`   Memo: ${memo}`))
     }
   }
+
+  console.log('')
 }

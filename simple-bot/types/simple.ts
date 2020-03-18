@@ -99,10 +99,10 @@ export namespace Simple {
     // LoanPayment = 'Loan Payment',
     MoneyTransfers = 'Money Transfers',
     // OtherFinancial = 'Other Financial',
-    // TaxPreparation = 'Tax Preparation',
-    // TaxesFedral = 'Taxes, Fedral',
+    TaxPreparation = 'Tax Preparation',
+    TaxesFedral = 'Taxes, Fedral',
     // TaxesOther = 'Taxes, Other',
-    // TaxesState = 'Taxes, State',
+    TaxesState = 'Taxes, State',
     // CreditCardPayment = 'Credit Card Payment',
 
     // Sports & Fitness
