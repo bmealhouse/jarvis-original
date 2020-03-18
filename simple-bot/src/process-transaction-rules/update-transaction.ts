@@ -81,10 +81,21 @@ export default async (
 
     // select first goal in the filtered list
     console.log('  selecting first category in the filted list…')
-    await Promise.all([
-      page.waitForNavigation({waitUntil: 'networkidle0'}),
-      page.click('.amounts-list button'),
-    ])
+    await page.click('.amounts-list button')
+
+    // confirm insufficient funds message
+    try {
+      const okayButton = await page.waitForSelector(
+        '.offset-content.-small button[type="button"]',
+        {visible: true, timeout: 1000},
+      )
+
+      console.log('  confirming insufficient funds message…')
+      await Promise.all([
+        page.waitForNavigation({waitUntil: 'networkidle0'}),
+        okayButton.click(),
+      ])
+    } catch {}
 
     // wait for transaction to refresh
     console.log('  waiting for transaction to refresh…')
