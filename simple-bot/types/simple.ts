@@ -112,7 +112,7 @@ export namespace Simple {
     // Memberships = 'Memberships',
     // OtherSportsAndFitness = 'Other Sports & Fitness',
     // SportingEvents = 'Sporting Events',
-    // SportingGoods = 'Sporting Goods',
+    SportingGoods = 'Sporting Goods',
 
     // Food & Drink
     // AlcoholAndBars = 'Alcohol & Bars',
@@ -122,7 +122,7 @@ export namespace Simple {
     // Groceries = 'Groceries',
     // OtherFoodAndDrink = 'Other Food & Drink',
     Restaurants = 'Restaurants',
-    // Snacks = 'Snacks',
+    Snacks = 'Snacks',
     // Tobacco = 'Tobacco',
 
     // Gifts & Donations
@@ -142,9 +142,9 @@ export namespace Simple {
 
     // Home
     // Furnishings = 'Furnishings',
-    // HomeInsurance = 'Home Insurance',
+    HomeInsurance = 'Home Insurance',
     // HomePurchase = 'Home Purchase',
-    // HomeServices = 'Home Services',
+    HomeServices = 'Home Services',
     HomeSupplies = 'Home Supplies',
     // RepairsAndImprovement = 'Repairs & Improvement',
     LawnAndGarden = 'Lawn & Garden',
@@ -186,7 +186,7 @@ export namespace Simple {
     // Accessories = 'Accessories',
     // Beauty = 'Beauty',
     // BodyEnhancement = 'Body Enhancement',
-    // Clothing = 'Clothing',
+    Clothing = 'Clothing',
     Counseling = 'Counseling',
     Hair = 'Hair',
     Hobbies = 'Hobbies',

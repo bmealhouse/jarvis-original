@@ -10,8 +10,12 @@ export default (
   for (const transaction of transactions) {
     const {
       amounts: {amount},
-      associated_goal_info: {reference: associatedGoalReference} = {},
+      associated_goal_info: {
+        reference: associatedGoalReference,
+        is_actually_associated: isActuallyAssociated,
+      } = {},
       categories: [category],
+      geo: {city} = {},
       description,
       raw_description: rawDescription,
       memo = '',
@@ -49,6 +53,10 @@ export default (
 
       if (rule.amountLessThan) {
         return amount < rule.amountLessThan
+      }
+
+      if (rule.cityEquals) {
+        return city === rule.cityEquals
       }
 
       if (rule.recordedAfter) {
@@ -101,7 +109,10 @@ export default (
     }
 
     // does the goal ID match the rule's goal (optional)
-    if (rule.applyGoal && rule.applyGoal !== associatedGoalReference) {
+    if (
+      rule.applyGoal &&
+      (rule.applyGoal !== associatedGoalReference || !isActuallyAssociated)
+    ) {
       transactionUpdate.applyGoal = rule.applyGoal
     }
 

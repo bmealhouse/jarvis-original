@@ -4,7 +4,7 @@ import {TransactionUpdate} from '../../types'
 import {goalSettingsById} from '../config/simple-goals'
 
 const config = {
-  skip: 0,
+  skip: 40,
   take: 10,
 }
 
@@ -29,7 +29,10 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
       geo = {},
       times: {when_recorded_local: recordedLocalTime},
       amounts: {amount},
-      associated_goal_info: {name: associatedGoalName = ''} = {},
+      associated_goal_info: {
+        name: associatedGoalName = '',
+        is_actually_associated: isActuallyAssociated,
+      } = {},
     } = transaction
 
     const formattedDate = chalk.gray(
@@ -61,12 +64,12 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
     }
 
     if (updates.applyGoal) {
-      if (associatedGoalName) {
+      if (associatedGoalName && isActuallyAssociated) {
         console.log(
           chalk.yellowBright(
             `   Update goal: ${associatedGoalName} >>> ${
               goalSettingsById[updates.applyGoal].displayText
-            } (ensure this is working)`,
+            }`,
           ),
         )
       } else {

@@ -18,7 +18,6 @@ bootstrapProgram(async ({browser, page}) => {
       const response = request.response()
       if (response?.ok()) {
         transactions = (await response.json()) as Simple.Transaction[]
-        console.log('  > set transactions…')
       }
     }
   })
@@ -29,19 +28,23 @@ bootstrapProgram(async ({browser, page}) => {
   await page.waitForSelector('main:not(.-loading)')
 
   let currentPage = 1
-  const stopAtPage = 2
+  const stopAtPage = 6
   let numberOfPagingArrows
   console.log('Processing transactions…')
 
   do {
-    console.log('  > processing transactions…')
+    while (transactions.length === 0) {
+      // eslint-disable-next-line no-await-in-loop
+      await page.waitFor(100)
+    }
+
     const transactionUpdates = processTransactions(transactions)
-    console.log(`  > number of updates: ${transactionUpdates.length}`)
     for (const update of transactionUpdates) {
-      console.log('  > updating transaction…')
       // eslint-disable-next-line no-await-in-loop
       await updateTransaction(page, update)
     }
+
+    transactions = []
 
     if (currentPage >= stopAtPage) {
       break

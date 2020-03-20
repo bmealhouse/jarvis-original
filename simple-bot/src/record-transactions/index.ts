@@ -42,6 +42,9 @@ bootstrapProgram(async ({browser, page}) => {
     ])
 
     // eslint-disable-next-line no-await-in-loop
+    await page.waitFor(500)
+
+    // eslint-disable-next-line no-await-in-loop
     await page.waitForSelector('.transactions-paging .paging-arrow', {
       visible: true,
     })
