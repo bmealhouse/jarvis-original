@@ -37,13 +37,17 @@ export default async (
   })
 
   if (applyCategory) {
-    await page.waitFor(1000) // FIXME: does this work?
+    // FIXME: does this work?
+    await page.waitFor(1000)
 
-    await click({
+    const element = await click({
       name: 'change category button',
       selector: `.change-option a[href*="${uuid}/category"]`,
       waitForNavigation: true,
     })
+
+    // FIXME: remove this
+    console.log({element})
 
     await type({
       name: 'categories filter text box',
@@ -132,10 +136,13 @@ export default async (
       waitForNavigation: false,
     })
 
-    console.log('  | waiting for memo to save…')
-    await page.waitForSelector('button[type="submit"]', {
-      hidden: true,
-    })
+    try {
+      console.log('  | waiting for memo to save…')
+      await page.waitForSelector('button[type="submit"]', {
+        hidden: true,
+        timeout: 1000,
+      })
+    } catch {}
 
     await waitForTransactionRefresh()
   }
@@ -195,7 +202,7 @@ export default async (
       console.log(`  | waiting for ${name}…`)
       const element = await page.waitForSelector(selector, {
         visible: true,
-        timeout: 2500,
+        timeout: 1000,
       })
 
       console.log(`  | typing "${text}" in ${name}…`)
@@ -212,9 +219,12 @@ export default async (
   }
 
   async function waitForTransactionRefresh(): Promise<void> {
-    console.log('  | waiting for transaction to refresh…')
-    await page.waitForSelector('.transactions-refresh-notice', {
-      hidden: true,
-    })
+    try {
+      console.log('  | waiting for transaction to refresh…')
+      await page.waitForSelector('.transactions-refresh-notice', {
+        hidden: true,
+        timeout: 2500,
+      })
+    } catch {}
   }
 }

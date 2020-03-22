@@ -4,21 +4,28 @@ import {TransactionUpdate} from '../../types'
 import {goalSettingsById} from '../config/simple-goals'
 
 const config = {
-  skip: 40,
+  filter: '',
+  skip: 170,
   take: 10,
 }
 
 export default (transactionUpdates: TransactionUpdate[]): void => {
   for (const {transaction, ...updates} of transactionUpdates) {
-    if (config.skip > 0) {
-      config.skip -= 1
-      continue
-    }
-
-    if (config.take > 0) {
-      config.take -= 1
+    if (config.filter) {
+      if (!transaction.description.toUpperCase().includes(config.filter)) {
+        continue
+      }
     } else {
-      return
+      if (config.skip > 0) {
+        config.skip -= 1
+        continue
+      }
+
+      if (config.take > 0) {
+        config.take -= 1
+      } else {
+        return
+      }
     }
 
     const {
@@ -49,8 +56,21 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
       `\n${formattedDate} ${description.toUpperCase()} ${formattedAmount}`,
     )
 
+    console.log(
+      chalk.gray(
+        JSON.stringify({
+          when_recorded: transaction.times.when_recorded,
+          when_recorded_local: transaction.times.when_recorded_local,
+        }),
+      ),
+    )
+
     if (Object.keys(geo).length > 0) {
       console.log(chalk.gray(JSON.stringify(geo)))
+    }
+
+    if (Object.keys(transaction.associated_goal_info || {}).length > 0) {
+      console.log(chalk.gray(JSON.stringify(transaction.associated_goal_info)))
     }
 
     if (updates.applyCategory) {

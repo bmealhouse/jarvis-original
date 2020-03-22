@@ -8,12 +8,16 @@ export namespace Config {
     }
   }
 
+  export interface IgnoredGoals {
+    [goalId: string]: string
+  }
+
   // Default export for src/config/simple-rules.ts
   export interface TransactionRules {
     [transactionDesciptionTextToMatch: string]: TransactionRule[]
   }
 
-  // recordedAfter and recordedBetween date formats allowed:
+  // recordedAfter and recordedBefore date formats allowed:
   //   03/01/2019 === March 1st, 2019
   //   03/01 === March 1st, {{year of transaction}}
   export interface TransactionRule {
@@ -22,7 +26,7 @@ export namespace Config {
     amountLessThan?: number
     cityEquals?: string
     recordedAfter?: string
-    recordedBetween?: [string, string]
+    recordedBefore?: string
     applyCategory?: Simple.Category
     applyGoal?: string
     applyMemo?: string

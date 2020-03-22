@@ -1,6 +1,8 @@
+import * as dayjs from 'dayjs'
 import {Simple, TransactionUpdate} from '../../types'
 import simpleRules from '../config/simple-rules'
 import simpleTransactions from '../config/simple-transactions'
+import {ignoredGoals} from '../config/simple-goals'
 
 export default (
   transactions: Simple.Transaction[] = simpleTransactions,
@@ -19,11 +21,14 @@ export default (
       description,
       raw_description: rawDescription,
       memo = '',
-      times: {when_recorded_local: recordedLocalTime},
+      times: {when_recorded: whenTransactionRecorded},
     } = transaction
 
     // check if transaction should be skipped
-    if (memo.includes('#skip')) {
+    if (
+      memo.includes('#skip') ||
+      (associatedGoalReference && ignoredGoals[associatedGoalReference])
+    ) {
       continue
     }
 
@@ -43,54 +48,67 @@ export default (
 
     // find rule based on where condition (if applicable)
     const rule = transactionRules.find(rule => {
+      let result = true
+
       if (rule.amountEquals) {
-        return amount === rule.amountEquals
+        result = amount === rule.amountEquals
       }
 
-      if (rule.amountGreaterThan) {
-        return amount > rule.amountGreaterThan
+      if (result && rule.amountGreaterThan) {
+        result = amount > rule.amountGreaterThan
       }
 
-      if (rule.amountLessThan) {
-        return amount < rule.amountLessThan
+      if (result && rule.amountLessThan) {
+        result = amount < rule.amountLessThan
       }
 
-      if (rule.cityEquals) {
-        return city === rule.cityEquals
+      if (result && rule.cityEquals) {
+        result = city === rule.cityEquals
       }
 
-      if (rule.recordedAfter) {
-        const recordedDate = new Date(recordedLocalTime)
-        const recordedYear = recordedDate.getFullYear()
+      if (result && rule.recordedAfter) {
+        const transactionRecordedDate = dayjs(whenTransactionRecorded)
+        let date = dayjs(rule.recordedAfter)
 
-        let afterDate = new Date(rule.recordedAfter)
         if (rule.recordedAfter.split('/').length === 2) {
-          afterDate = new Date(`${rule.recordedAfter}/${recordedYear}`)
+          date = dayjs(
+            `${rule.recordedAfter}/${transactionRecordedDate.year()}`,
+          )
         }
 
-        return recordedDate > afterDate
+        const [hour, minute] = rule.recordedAfter.split(':')
+        if (hour && minute) {
+          date = dayjs(whenTransactionRecorded)
+            .hour(Number(hour))
+            .minute(Number(minute))
+            .second(0)
+        }
+
+        result = transactionRecordedDate.isAfter(date)
       }
 
-      if (rule.recordedBetween) {
-        const recordedDate = new Date(recordedLocalTime)
-        const recordedYear = recordedDate.getFullYear()
+      if (result && rule.recordedBefore) {
+        const transactionRecordedDate = dayjs(whenTransactionRecorded)
+        let date = dayjs(rule.recordedBefore)
 
-        const [start, end] = rule.recordedBetween
-
-        let startDate = new Date(start)
-        if (start.split('/').length === 2) {
-          startDate = new Date(`${start}/${recordedYear}`)
+        if (rule.recordedBefore.split('/').length === 2) {
+          date = dayjs(
+            `${rule.recordedBefore}/${transactionRecordedDate.year()}`,
+          )
         }
 
-        let endDate = new Date(end)
-        if (end.split('/').length === 2) {
-          endDate = new Date(`${end}/${recordedYear}`)
+        const [hour, minute] = rule.recordedBefore.split(':')
+        if (hour && minute) {
+          date = dayjs(whenTransactionRecorded)
+            .hour(Number(hour))
+            .minute(Number(minute))
+            .second(0)
         }
 
-        return recordedDate > startDate && recordedDate < endDate
+        result = transactionRecordedDate.isBefore(date)
       }
 
-      return true
+      return result
     })
 
     // when no rule is found, ensure the todo memo has been appended

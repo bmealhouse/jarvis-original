@@ -74,8 +74,8 @@ export namespace Simple {
     // Books = 'Books',
     // Dance = 'Dance',
     Games = 'Games',
-    // Movies = 'Movies',
-    // Music = 'Music',
+    Movies = 'Movies',
+    Music = 'Music',
     // News = 'News',
     RandomFun = 'Random Fun',
     TV = 'TV',
@@ -98,9 +98,9 @@ export namespace Simple {
     // Loan = 'Loan',
     // LoanPayment = 'Loan Payment',
     MoneyTransfers = 'Money Transfers',
-    // OtherFinancial = 'Other Financial',
+    OtherFinancial = 'Other Financial',
     TaxPreparation = 'Tax Preparation',
-    TaxesFedral = 'Taxes, Fedral',
+    TaxesFederal = 'Taxes, Federal',
     // TaxesOther = 'Taxes, Other',
     TaxesState = 'Taxes, State',
     // CreditCardPayment = 'Credit Card Payment',
@@ -110,17 +110,17 @@ export namespace Simple {
     // FitnessGear = 'Fitness Gear',
     // Golf = 'Golf',
     // Memberships = 'Memberships',
-    // OtherSportsAndFitness = 'Other Sports & Fitness',
+    OtherSportsAndFitness = 'Other Sports & Fitness',
     // SportingEvents = 'Sporting Events',
     SportingGoods = 'Sporting Goods',
 
     // Food & Drink
-    // AlcoholAndBars = 'Alcohol & Bars',
+    AlcoholAndBars = 'Alcohol & Bars',
     CoffeeAndTea = 'Coffee & Tea',
     // Dessert = 'Dessert',
     FastFood = 'Fast Food',
     // Groceries = 'Groceries',
-    // OtherFoodAndDrink = 'Other Food & Drink',
+    OtherFoodAndDrink = 'Other Food & Drink',
     Restaurants = 'Restaurants',
     Snacks = 'Snacks',
     // Tobacco = 'Tobacco',
@@ -134,7 +134,7 @@ export namespace Simple {
     // Dentist = 'Dentist',
     Doctor = 'Doctor',
     // Equipment = 'Equipment',
-    // Eyes = 'Eyes',
+    Eyes = 'Eyes',
     // HealthInsurance = 'Health Insurance',
     // OtherHealthAndMedical = 'Other Health & Medical',
     Pharmacies = 'Pharmacies',
@@ -146,7 +146,7 @@ export namespace Simple {
     // HomePurchase = 'Home Purchase',
     HomeServices = 'Home Services',
     HomeSupplies = 'Home Supplies',
-    // RepairsAndImprovement = 'Repairs & Improvement',
+    RepairsAndImprovement = 'Repairs & Improvement',
     LawnAndGarden = 'Lawn & Garden',
     Mortgage = 'Mortgage',
     // Moving = 'Moving',
@@ -174,7 +174,7 @@ export namespace Simple {
     // Legal
     // LegalFees = 'Legal Fees',
     // LegalServices = 'Legal Services',
-    // OtherLegalCosts = 'Other Legal Costs',
+    OtherLegalCosts = 'Other Legal Costs',
 
     // Office
     // Equipment = 'Equipment',
@@ -213,7 +213,7 @@ export namespace Simple {
     // Transportation
     AutoInsurance = 'Auto Insurance',
     AutoPayment = 'Auto Payment',
-    // AutoServices = 'Auto Services',
+    AutoServices = 'Auto Services',
     // AutoSupplies = 'Auto Supplies',
     // Bicycle = 'Bicycle',
     BoatAndMarine = 'Boats & Marine',
@@ -248,7 +248,7 @@ export namespace Simple {
     // OtherUtilities = 'Other Utilities',
     Phone = 'Phone',
     Trash = 'Trash',
-    // WaterAndSewer = 'Water & Sewer',
+    WaterAndSewer = 'Water & Sewer',
   }
 
   interface CategoryInfo {

@@ -1,3 +1,4 @@
+import * as chalk from 'chalk'
 import {Simple} from '../../types'
 import bootstrapProgram from '../bootstrap-program'
 import outputDryRun from './output-dry-run'
@@ -28,7 +29,7 @@ bootstrapProgram(async ({browser, page}) => {
   await page.waitForSelector('main:not(.-loading)')
 
   let currentPage = 1
-  const stopAtPage = 6
+  const stopAtPage = 8
   let numberOfPagingArrows
   console.log('Processing transactions…')
 
@@ -50,18 +51,29 @@ bootstrapProgram(async ({browser, page}) => {
       break
     }
 
-    // eslint-disable-next-line no-await-in-loop
-    await Promise.all([
-      page.waitForNavigation({waitUntil: 'networkidle0'}),
-      page.click('.transactions-paging li:last-of-type'),
-    ])
+    console.log(`\n${chalk.bgMagenta('Navigating to next page…')}`)
+
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.all([
+        page.waitForNavigation({waitUntil: 'networkidle0'}),
+        page.click('.transactions-paging li:last-of-type'),
+      ])
+    } catch (error) {
+      console.log(chalk.redBright(` error: ${String(error.message)}`))
+    }
 
     currentPage += 1
 
-    // eslint-disable-next-line no-await-in-loop
-    await page.waitForSelector('.transactions-paging .paging-arrow', {
-      visible: true,
-    })
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await page.waitForSelector('.transactions-paging .paging-arrow', {
+        visible: true,
+        timeout: 1000,
+      })
+    } catch (error) {
+      console.log(chalk.redBright(` error: ${String(error.message)}`))
+    }
 
     // eslint-disable-next-line no-await-in-loop
     numberOfPagingArrows = await page.$$eval(
