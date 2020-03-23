@@ -37,18 +37,14 @@ export default async (
   })
 
   if (applyCategory) {
-    // FIXME: does this work?
-    await page.waitFor(1000)
-
-    const element = await click({
+    await page.waitFor(250) // animation
+    await click({
       name: 'change category button',
       selector: `.change-option a[href*="${uuid}/category"]`,
       waitForNavigation: true,
     })
 
-    // FIXME: remove this
-    console.log({element})
-
+    await page.waitFor(250) // animation
     await type({
       name: 'categories filter text box',
       selector: '.sidebar-filtered-list input[type="text"]',
@@ -57,8 +53,8 @@ export default async (
 
     await click({
       name: 'first filtered category',
-      // selector: '.amounts-list button',
-      selector: '.sidebar-nav-item-group .list > li:last-of-type button', // FIXME: does this work for Gifts?
+      selector:
+        '.amounts-list > li:last-of-type > .list > li:last-of-type button',
       waitForNavigation: false,
     })
 
@@ -76,16 +72,19 @@ export default async (
       displayError: false,
     })
 
+    await page.waitFor(250) // animation
     await waitForTransactionRefresh()
   }
 
   if (applyGoal) {
+    await page.waitFor(250) // animation
     await click({
       name: 'change goal button',
       selector: `.change-option a[href*="${uuid}/goal"]`,
       waitForNavigation: true,
     })
 
+    await page.waitFor(250) // animation
     await type({
       name: 'goals filter text box',
       selector: '.sidebar-filtered-list input[type="text"]',
@@ -98,6 +97,7 @@ export default async (
       waitForNavigation: false,
     })
 
+    await page.waitFor(250) // animation
     await click({
       name: 'insufficient funds message',
       selector: '.offset-content.-small button[type="button"]',
@@ -105,6 +105,7 @@ export default async (
       displayError: false,
     })
 
+    await page.waitFor(250) // animation
     await waitForTransactionRefresh()
   }
 

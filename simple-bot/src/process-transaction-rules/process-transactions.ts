@@ -68,8 +68,8 @@ export default (
 
       if (result && rule.recordedAfter) {
         const transactionRecordedDate = dayjs(whenTransactionRecorded)
-        let date = dayjs(rule.recordedAfter)
 
+        let date = dayjs(rule.recordedAfter)
         if (rule.recordedAfter.split('/').length === 2) {
           date = dayjs(
             `${rule.recordedAfter}/${transactionRecordedDate.year()}`,
@@ -89,8 +89,8 @@ export default (
 
       if (result && rule.recordedBefore) {
         const transactionRecordedDate = dayjs(whenTransactionRecorded)
-        let date = dayjs(rule.recordedBefore)
 
+        let date = dayjs(rule.recordedBefore)
         if (rule.recordedBefore.split('/').length === 2) {
           date = dayjs(
             `${rule.recordedBefore}/${transactionRecordedDate.year()}`,

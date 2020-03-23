@@ -131,7 +131,7 @@ export namespace Simple {
 
     // Health & Medical
     // CareFacilities = 'Care Facilities',
-    // Dentist = 'Dentist',
+    Dentist = 'Dentist',
     Doctor = 'Doctor',
     // Equipment = 'Equipment',
     Eyes = 'Eyes',

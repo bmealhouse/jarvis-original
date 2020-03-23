@@ -29,7 +29,7 @@ bootstrapProgram(async ({browser, page}) => {
   await page.waitForSelector('main:not(.-loading)')
 
   let currentPage = 1
-  const stopAtPage = 8
+  const stopAtPage = 11
   let numberOfPagingArrows
   console.log('Processing transactions…')
 
@@ -51,7 +51,9 @@ bootstrapProgram(async ({browser, page}) => {
       break
     }
 
-    console.log(`\n${chalk.bgMagenta('Navigating to next page…')}`)
+    console.log(
+      `\n${chalk.bgMagenta.black(` Navigating to page ${currentPage + 1}… `)}`,
+    )
 
     try {
       // eslint-disable-next-line no-await-in-loop
@@ -65,11 +67,13 @@ bootstrapProgram(async ({browser, page}) => {
 
     currentPage += 1
 
+    // eslint-disable-next-line no-await-in-loop
+    await page.waitFor(500)
+
     try {
       // eslint-disable-next-line no-await-in-loop
       await page.waitForSelector('.transactions-paging .paging-arrow', {
         visible: true,
-        timeout: 1000,
       })
     } catch (error) {
       console.log(chalk.redBright(` error: ${String(error.message)}`))

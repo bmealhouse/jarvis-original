@@ -5,7 +5,7 @@ import {goalSettingsById} from '../config/simple-goals'
 
 const config = {
   filter: '',
-  skip: 170,
+  skip: 20,
   take: 10,
 }
 
@@ -34,7 +34,7 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
       memo = '',
       categories: [category],
       geo = {},
-      times: {when_recorded_local: recordedLocalTime},
+      times: {when_recorded: whenTransactionRecorded},
       amounts: {amount},
       associated_goal_info: {
         name: associatedGoalName = '',
@@ -43,7 +43,7 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
     } = transaction
 
     const formattedDate = chalk.gray(
-      dayjs(recordedLocalTime).format('MM/DD/YYYY @ hh:mma'),
+      dayjs(whenTransactionRecorded).format('MM/DD/YYYY @ hh:mma'),
     )
 
     const formattedAmount = `${chalk.dim('(')}${
