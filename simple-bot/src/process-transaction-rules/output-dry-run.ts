@@ -5,7 +5,7 @@ import {goalSettingsById} from '../config/simple-goals'
 
 const config = {
   filter: '',
-  skip: 20,
+  skip: 0,
   take: 10,
 }
 

@@ -17,6 +17,10 @@ interface ProgramContext {
 export default async (
   program: (context: ProgramContext) => Promise<void>,
 ): Promise<void> => {
+  if (process.env.DRY_RUN) {
+    return program({})
+  }
+
   // check for .lockout file
   const rootDir = path.join(__dirname, '..')
   const files = await fs.promises.readdir(rootDir)

@@ -44,6 +44,7 @@
   },
   "scripts": {
     "start": "yarn process-transaction-rules",
+    "start:dry": "DRY_RUN=true yarn start",
     "process-transaction-rules": "ts-node src/process-transaction-rules/index.ts",
     "record-transactions": "ts-node src/record-transactions/index.ts"
   }
