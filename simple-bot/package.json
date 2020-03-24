@@ -12,18 +12,7 @@
     "bracketSpacing": false
   },
   "xo": {
-    "prettier": true,
-    "rules": {
-      "capitalized-comments": "off",
-      "no-unused-vars": [
-        "error",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_"
-        }
-      ],
-      "unicorn/string-content": "off"
-    }
+    "prettier": true
   },
   "dependencies": {
     "chalk": "3.0.0",

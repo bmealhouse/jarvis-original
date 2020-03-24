@@ -37,14 +37,14 @@ export default async (
   })
 
   if (applyCategory) {
-    await page.waitFor(250) // animation
+    await page.waitFor(250) // Animation
     await click({
       name: 'change category button',
       selector: `.change-option a[href*="${uuid}/category"]`,
       waitForNavigation: true,
     })
 
-    await page.waitFor(250) // animation
+    await page.waitFor(250) // Animation
     await type({
       name: 'categories filter text box',
       selector: '.sidebar-filtered-list input[type="text"]',
@@ -72,19 +72,19 @@ export default async (
       displayError: false,
     })
 
-    await page.waitFor(250) // animation
+    await page.waitFor(250) // Animation
     await waitForTransactionRefresh()
   }
 
   if (applyGoal) {
-    await page.waitFor(250) // animation
+    await page.waitFor(250) // Animation
     await click({
       name: 'change goal button',
       selector: `.change-option a[href*="${uuid}/goal"]`,
       waitForNavigation: true,
     })
 
-    await page.waitFor(250) // animation
+    await page.waitFor(250) // Animation
     await type({
       name: 'goals filter text box',
       selector: '.sidebar-filtered-list input[type="text"]',
@@ -97,7 +97,7 @@ export default async (
       waitForNavigation: false,
     })
 
-    await page.waitFor(250) // animation
+    await page.waitFor(250) // Animation
     await click({
       name: 'insufficient funds message',
       selector: '.offset-content.-small button[type="button"]',
@@ -105,7 +105,7 @@ export default async (
       displayError: false,
     })
 
-    await page.waitFor(250) // animation
+    await page.waitFor(250) // Animation
     await waitForTransactionRefresh()
   }
 

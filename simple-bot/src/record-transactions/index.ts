@@ -56,7 +56,9 @@ bootstrapProgram(async ({browser, page}) => {
     )
   } while (numberOfPagingArrows !== 1)
 
-  const data = `import {Simple} from '../../types'
+  // eslint-disable-next-line unicorn/string-content
+  const data = `/* eslint-disable unicorn/string-content */
+import {Simple} from '../../types'
 
 // prettier-ignore
 const transactions: Simple.Transaction[] =

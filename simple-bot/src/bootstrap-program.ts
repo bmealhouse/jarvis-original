@@ -21,13 +21,13 @@ export default async (
     return program({})
   }
 
-  // check for .lockout file
+  // Check for .lockout file
   const rootDir = path.join(__dirname, '..')
   const files = await fs.promises.readdir(rootDir)
   const lockoutFile = files.find(file => file.includes('.lockout'))
   const lockoutFormat = 'YYYY-MM-DD-hh-mm-A'
 
-  // when a lockout file is found, if it was created more than 24 hours ago,
+  // When a lockout file is found, if it was created more than 24 hours ago,
   // delete it and run normally, otherwise, do a dry run
   if (lockoutFile) {
     const lockoutTimestamp = dayjs(lockoutFile.slice(0, -8), lockoutFormat)
@@ -74,7 +74,7 @@ export default async (
     return
   }
 
-  // prompt for verification code
+  // Prompt for verification code
   const {verificationCode} = await inquirer.prompt([
     {name: 'verificationCode', message: 'Verification code:'},
   ])

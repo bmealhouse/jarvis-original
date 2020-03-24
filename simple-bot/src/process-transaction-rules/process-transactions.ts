@@ -24,7 +24,7 @@ export default (
       times: {when_recorded: whenTransactionRecorded},
     } = transaction
 
-    // check if transaction should be skipped
+    // Check if transaction should be skipped
     if (
       memo.includes('#skip') ||
       (associatedGoalReference && ignoredGoals[associatedGoalReference])
@@ -32,7 +32,7 @@ export default (
       continue
     }
 
-    // find rules based on transaction description text
+    // Find rules based on transaction description text
     const [, transactionRules] =
       Object.entries(simpleRules).find(
         ([text]) =>
@@ -40,13 +40,13 @@ export default (
           rawDescription.toUpperCase().includes(text),
       ) ?? []
 
-    // when no rules are found, ensure the todo memo has been appended
+    // When no rules are found, ensure the todo memo has been appended
     if (!transactionRules) {
       transactionUpdates.push({applyMemo: '#todo', transaction})
       continue
     }
 
-    // find rule based on where condition (if applicable)
+    // Find rule based on where condition (if applicable)
     const rule = transactionRules.find(rule => {
       let result = true
 
@@ -111,7 +111,7 @@ export default (
       return result
     })
 
-    // when no rule is found, ensure the todo memo has been appended
+    // When no rule is found, ensure the todo memo has been appended
     if (!rule) {
       transactionUpdates.push({applyMemo: '#todo', transaction})
       continue
@@ -121,12 +121,12 @@ export default (
       transaction,
     }
 
-    // does the category name match the rule's category
+    // Does the category name match the rule's category
     if (rule.applyCategory !== category.name) {
       transactionUpdate.applyCategory = rule.applyCategory
     }
 
-    // does the goal ID match the rule's goal (optional)
+    // Does the goal ID match the rule's goal (optional)
     if (
       rule.applyGoal &&
       (rule.applyGoal !== associatedGoalReference || !isActuallyAssociated)
@@ -134,14 +134,14 @@ export default (
       transactionUpdate.applyGoal = rule.applyGoal
     }
 
-    // does the memo include rule's memo text (optional)
+    // Does the memo include rule's memo text (optional)
     if (rule.applyMemo && memo !== rule.applyMemo) {
       transactionUpdate.applyMemo = rule.applyMemo
     } else if (memo && rule.applyMemo === undefined) {
       transactionUpdate.applyMemo = ''
     }
 
-    // only apply updates to transactions that have changes
+    // Only apply updates to transactions that have changes
     if (Object.keys(transactionUpdate).length > 1) {
       transactionUpdates.push(transactionUpdate)
     }

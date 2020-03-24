@@ -17,7 +17,7 @@ export namespace Config {
     [transactionDesciptionTextToMatch: string]: TransactionRule[]
   }
 
-  // recordedAfter and recordedBefore date formats allowed:
+  // "recordedAfter" and "recordedBefore" date formats allowed:
   //   03/01/2019 === March 1st, 2019
   //   03/01 === March 1st, {{year of transaction}}
   export interface TransactionRule {
