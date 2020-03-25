@@ -21,13 +21,6 @@
       "git add"
     ]
   },
-  "prettier": {
-    "useTabs": false,
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": false
-  },
   "xo": {
     "env": [
       "browser"
