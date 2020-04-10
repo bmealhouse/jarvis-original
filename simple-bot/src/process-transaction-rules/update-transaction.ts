@@ -36,8 +36,15 @@ export default async (
 		waitForNavigation: true
 	});
 
+	await page.waitFor(250); // Animation
+
+	console.log('  | waiting for transaction breakdown table to load…');
+	await page.waitForSelector('.breakdown-table .-faux', {
+		hidden: true,
+		timeout: 2500
+	});
+
 	if (applyCategory) {
-		await page.waitFor(250); // Animation
 		await click({
 			name: 'change category button',
 			selector: `.change-option a[href*="${uuid}/category"]`,
@@ -51,10 +58,13 @@ export default async (
 			text: applyCategory
 		});
 
+		const filteredCategorySelector =
+			'.amounts-list > li:last-of-type > .list > li:last-of-type button';
+		// '.amounts-list > li:first-of-type > .list > li:last-of-type button';
+
 		await click({
 			name: 'first filtered category',
-			selector:
-				'.amounts-list > li:last-of-type > .list > li:last-of-type button',
+			selector: filteredCategorySelector,
 			waitForNavigation: false
 		});
 
@@ -77,7 +87,6 @@ export default async (
 	}
 
 	if (applyGoal) {
-		await page.waitFor(250); // Animation
 		await click({
 			name: 'change goal button',
 			selector: `.change-option a[href*="${uuid}/goal"]`,
@@ -141,7 +150,7 @@ export default async (
 			console.log('  | waiting for memo to save…');
 			await page.waitForSelector('button[type="submit"]', {
 				hidden: true,
-				timeout: 1000
+				timeout: 2500
 			});
 		} catch {}
 

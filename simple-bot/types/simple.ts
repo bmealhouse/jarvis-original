@@ -81,7 +81,7 @@ export namespace Simple {
 		TV = 'TV',
 
 		// Education
-		// BooksAndSupplies = 'Books & Supplies',
+		BooksAndSupplies = 'Books & Supplies',
 		// RoomAndBoard = 'Room & Board',
 		// StudentLoans = 'Student Loans',
 		// TuitionAndFees = 'Tuition & Fees',
@@ -108,7 +108,7 @@ export namespace Simple {
 		// Sports & Fitness
 		// Camping = 'Camping',
 		// FitnessGear = 'Fitness Gear',
-		// Golf = 'Golf',
+		Golf = 'Golf',
 		// Memberships = 'Memberships',
 		OtherSportsAndFitness = 'Other Sports & Fitness',
 		// SportingEvents = 'Sporting Events',
@@ -123,7 +123,7 @@ export namespace Simple {
 		OtherFoodAndDrink = 'Other Food & Drink',
 		Restaurants = 'Restaurants',
 		Snacks = 'Snacks',
-		// Tobacco = 'Tobacco',
+		Tobacco = 'Tobacco',
 
 		// Gifts & Donations
 		// Charities = 'Charities',
@@ -136,7 +136,7 @@ export namespace Simple {
 		// Equipment = 'Equipment',
 		Eyes = 'Eyes',
 		// HealthInsurance = 'Health Insurance',
-		// OtherHealthAndMedical = 'Other Health & Medical',
+		OtherHealthAndMedical = 'Other Health & Medical',
 		Pharmacies = 'Pharmacies',
 		// Prescriptions = 'Prescriptions',
 
@@ -149,7 +149,7 @@ export namespace Simple {
 		RepairsAndImprovement = 'Repairs & Improvement',
 		LawnAndGarden = 'Lawn & Garden',
 		Mortgage = 'Mortgage',
-		// Moving = 'Moving',
+		Moving = 'Moving',
 		// OtherHome = 'Other Home',
 		// PropertyTax = 'Property Tax',
 		// Rent = 'Rent',
@@ -184,7 +184,7 @@ export namespace Simple {
 
 		// Personal
 		// Accessories = 'Accessories',
-		// Beauty = 'Beauty',
+		Beauty = 'Beauty',
 		// BodyEnhancement = 'Body Enhancement',
 		Clothing = 'Clothing',
 		Counseling = 'Counseling',
@@ -214,7 +214,7 @@ export namespace Simple {
 		AutoInsurance = 'Auto Insurance',
 		AutoPayment = 'Auto Payment',
 		AutoServices = 'Auto Services',
-		// AutoSupplies = 'Auto Supplies',
+		AutoSupplies = 'Auto Supplies',
 		// Bicycle = 'Bicycle',
 		BoatAndMarine = 'Boats & Marine',
 		Gas = 'Gas',
@@ -228,7 +228,7 @@ export namespace Simple {
 		// Travel
 		// CarRentals = 'Car Rentals',
 		Flights = 'Flights',
-		// Hotels = 'Hotels',
+		Hotels = 'Hotels',
 		// ToursAndCruises = 'Tours & Cruises',
 		// Train = 'Train',
 		// TravelBuses = 'Travel Buses',

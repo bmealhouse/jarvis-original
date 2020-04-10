@@ -25,10 +25,7 @@ export default (
 		} = transaction;
 
 		// Check if transaction should be skipped
-		if (
-			memo.includes('#skip') ||
-			(associatedGoalReference && ignoredGoals[associatedGoalReference])
-		) {
+		if (memo.includes('#skip')) {
 			continue;
 		}
 
@@ -62,8 +59,8 @@ export default (
 				result = amount < rule.amountLessThan;
 			}
 
-			if (result && rule.cityEquals) {
-				result = city === rule.cityEquals;
+			if (result && rule.cityEquals && city) {
+				result = rule.cityEquals.includes(city);
 			}
 
 			if (result && rule.recordedAfter) {
@@ -113,7 +110,7 @@ export default (
 
 		// When no rule is found, ensure the todo memo has been appended
 		if (!rule) {
-			transactionUpdates.push({applyMemo: '#todo', transaction});
+			transactionUpdates.push({applyMemo: '#todo missing rule', transaction});
 			continue;
 		}
 
@@ -129,15 +126,25 @@ export default (
 		// Does the goal ID match the rule's goal (optional)
 		if (
 			rule.applyGoal &&
-			(rule.applyGoal !== associatedGoalReference || !isActuallyAssociated)
+			!(associatedGoalReference && ignoredGoals[associatedGoalReference])
 		) {
-			transactionUpdate.applyGoal = rule.applyGoal;
+			if (!isActuallyAssociated || rule.applyGoal !== associatedGoalReference) {
+				transactionUpdate.applyGoal = rule.applyGoal;
+			}
+		} else if (
+			isActuallyAssociated &&
+			associatedGoalReference &&
+			!ignoredGoals[associatedGoalReference]
+		) {
+			transactionUpdate.applyGoal = 'SAFE_TO_SPEND';
 		}
 
-		// Does the memo include rule's memo text (optional)
-		if (rule.applyMemo && memo !== rule.applyMemo) {
-			transactionUpdate.applyMemo = rule.applyMemo;
-		} else if (memo && rule.applyMemo === undefined) {
+		// Does the memo text match the rule's memo (optional)
+		if (rule.applyMemo) {
+			if (memo !== rule.applyMemo) {
+				transactionUpdate.applyMemo = rule.applyMemo;
+			}
+		} else if (memo) {
 			transactionUpdate.applyMemo = '';
 		}
 

@@ -42,9 +42,9 @@ export default async (
 	}
 
 	const browser = await puppeteer.launch({
-		devtools: true,
+		devtools: false,
 		headless: false,
-		slowMo: 50,
+		slowMo: 25,
 		defaultViewport: {
 			width: 1280,
 			height: 1000

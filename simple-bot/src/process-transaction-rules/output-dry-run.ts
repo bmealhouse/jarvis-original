@@ -105,7 +105,15 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
 
 		if (updates.applyMemo !== undefined) {
 			if (updates.applyMemo.length > 0) {
-				console.log(chalk.greenBright(`   Apply memo: ${updates.applyMemo}`));
+				if (memo) {
+					console.log(
+						chalk.yellowBright(
+							`   Update memo: ${memo} >>> ${updates.applyMemo}`
+						)
+					);
+				} else {
+					console.log(chalk.greenBright(`   Apply memo: ${updates.applyMemo}`));
+				}
 			} else {
 				console.log(chalk.redBright(`   Remove memo: ${memo}`));
 			}

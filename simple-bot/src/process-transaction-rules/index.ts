@@ -29,7 +29,7 @@ bootstrapProgram(async ({browser, page}) => {
 	await page.waitForSelector('main:not(.-loading)');
 
 	let currentPage = 1;
-	const stopAtPage = 11;
+	const stopAtPage = 19;
 	let numberOfPagingArrows;
 	console.log('Processing transactions…');
 
@@ -68,7 +68,7 @@ bootstrapProgram(async ({browser, page}) => {
 		currentPage += 1;
 
 		// eslint-disable-next-line no-await-in-loop
-		await page.waitFor(500);
+		await page.waitForSelector('main:not(.-loading)');
 
 		try {
 			// eslint-disable-next-line no-await-in-loop

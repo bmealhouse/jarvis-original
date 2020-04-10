@@ -24,7 +24,7 @@ export namespace Config {
 		amountEquals?: number;
 		amountGreaterThan?: number;
 		amountLessThan?: number;
-		cityEquals?: string;
+		cityEquals?: string[];
 		recordedAfter?: string;
 		recordedBefore?: string;
 		applyCategory?: Simple.Category;
