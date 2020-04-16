@@ -87,35 +87,38 @@ export default async (
 	}
 
 	if (applyGoal) {
-		await click({
+		const element = await click({
 			name: 'change goal button',
 			selector: `.change-option a[href*="${uuid}/goal"]`,
-			waitForNavigation: true
-		});
-
-		await page.waitFor(250); // Animation
-		await type({
-			name: 'goals filter text box',
-			selector: '.sidebar-filtered-list input[type="text"]',
-			text: goalSettingsById[applyGoal].filterText
-		});
-
-		await click({
-			name: 'first filtered goal',
-			selector: '.amounts-list button',
-			waitForNavigation: false
-		});
-
-		await page.waitFor(250); // Animation
-		await click({
-			name: 'insufficient funds message',
-			selector: '.offset-content.-small button[type="button"]',
 			waitForNavigation: true,
 			displayError: false
 		});
 
-		await page.waitFor(250); // Animation
-		await waitForTransactionRefresh();
+		if (element) {
+			await page.waitFor(250); // Animation
+			await type({
+				name: 'goals filter text box',
+				selector: '.sidebar-filtered-list input[type="text"]',
+				text: goalSettingsById[applyGoal].filterText
+			});
+
+			await click({
+				name: 'first filtered goal',
+				selector: '.amounts-list button',
+				waitForNavigation: false
+			});
+
+			await page.waitFor(250); // Animation
+			await click({
+				name: 'insufficient funds message',
+				selector: '.offset-content.-small button[type="button"]',
+				waitForNavigation: true,
+				displayError: false
+			});
+
+			await page.waitFor(250); // Animation
+			await waitForTransactionRefresh();
+		}
 	}
 
 	if (applyMemo !== undefined) {

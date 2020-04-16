@@ -26,10 +26,11 @@ bootstrapProgram(async ({browser, page}) => {
 	console.log('Filtering activity by all time…');
 	await page.click('.filter-expand');
 	await page.select('.time-span-options > select', 'all');
-	await page.waitForSelector('main:not(.-loading)');
+	await page.waitForSelector('main.-loading', {hidden: true});
+	await page.waitFor(250); // Additionl wait time
 
 	let currentPage = 1;
-	const stopAtPage = 19;
+	const stopAtPage = 99;
 	let numberOfPagingArrows;
 	console.log('Processing transactions…');
 
@@ -68,7 +69,7 @@ bootstrapProgram(async ({browser, page}) => {
 		currentPage += 1;
 
 		// eslint-disable-next-line no-await-in-loop
-		await page.waitForSelector('main:not(.-loading)');
+		await page.waitForSelector('main.-loading', {hidden: true});
 
 		try {
 			// eslint-disable-next-line no-await-in-loop
