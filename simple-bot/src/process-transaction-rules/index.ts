@@ -34,24 +34,15 @@ bootstrapProgram(async ({browser, page}) => {
 	let numberOfPagingArrows;
 	console.log('Processing transactions…');
 
+	const transactionUpdates = processTransactions(transactions);
+	for (const update of transactionUpdates) {
+		// eslint-disable-next-line no-await-in-loop
+		await updateTransaction(page, update);
+	}
+
+	transactions = [];
+
 	do {
-		while (transactions.length === 0) {
-			// eslint-disable-next-line no-await-in-loop
-			await page.waitFor(100);
-		}
-
-		const transactionUpdates = processTransactions(transactions);
-		for (const update of transactionUpdates) {
-			// eslint-disable-next-line no-await-in-loop
-			await updateTransaction(page, update);
-		}
-
-		transactions = [];
-
-		if (currentPage >= stopAtPage) {
-			break;
-		}
-
 		console.log(
 			`\n${chalk.bgMagenta.black(` Navigating to page ${currentPage + 1}… `)}`
 		);
@@ -85,7 +76,20 @@ bootstrapProgram(async ({browser, page}) => {
 			'.transactions-paging .paging-arrow',
 			pagingArrows => pagingArrows.length
 		);
-	} while (numberOfPagingArrows !== 1);
+
+		while (transactions.length === 0) {
+			// eslint-disable-next-line no-await-in-loop
+			await page.waitFor(100);
+		}
+
+		const transactionUpdates = processTransactions(transactions);
+		for (const update of transactionUpdates) {
+			// eslint-disable-next-line no-await-in-loop
+			await updateTransaction(page, update);
+		}
+
+		transactions = [];
+	} while (numberOfPagingArrows !== 1 && currentPage < stopAtPage);
 
 	console.log('\nDone.');
 });

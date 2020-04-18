@@ -6,7 +6,7 @@ import {goalSettingsById} from '../config/simple-goals';
 const config = {
 	filter: '',
 	skip: 0,
-	take: 10
+	take: 99
 };
 
 export default (transactionUpdates: TransactionUpdate[]): void => {
