@@ -71,5 +71,9 @@ export default transactions;
 	const filename = path.join(__dirname, '../config/simple-transactions.ts');
 	await fs.promises.writeFile(filename, data, 'utf8');
 
+	await page.goto('https://bank.simple.com/signout', {
+		waitUntil: 'networkidle0'
+	});
+
 	await browser.close();
 });
