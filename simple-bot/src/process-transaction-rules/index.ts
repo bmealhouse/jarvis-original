@@ -30,7 +30,7 @@ bootstrapProgram(async ({browser, page}) => {
 	await page.waitFor(250); // Additionl wait time
 
 	let currentPage = 1;
-	const stopAtPage = 99;
+	const stopAtPage = 1;
 	let numberOfPagingArrows;
 	console.log('Processing transactions…');
 
