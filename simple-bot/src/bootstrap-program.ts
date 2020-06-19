@@ -87,7 +87,7 @@ export default async (
 	]);
 
 	console.log('Waiting for successful login…');
-	await page.waitForSelector('.balances');
+	await page.waitForSelector('main.-loading', {hidden: true});
 
 	return program({browser, page});
 };

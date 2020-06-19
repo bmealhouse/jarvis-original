@@ -27,28 +27,37 @@ bootstrapProgram(async ({browser, page}) => {
 	await page.click('.filter-expand');
 	await page.select('.time-span-options > select', 'all');
 	await page.waitForSelector('main.-loading', {hidden: true});
-	await page.waitFor(250); // Additionl wait time
+	await page.waitFor(1000); // Additionl wait time
+
+	const stopAtPage = 3;
 
 	let currentPage = 1;
-	const stopAtPage = 1;
-	let numberOfPagingArrows;
+	let hasNextPage;
 	console.log('Processing transactions…');
+
+	/* eslint-disable no-await-in-loop */
+
+	while (transactions.length === 0 || hasNextPage === undefined) {
+		await page.waitFor(100);
+		hasNextPage = await page.$$eval(
+			'.transactions-paging .icon-right-arrow',
+			pagingArrows => pagingArrows.length > 0
+		);
+	}
 
 	const transactionUpdates = processTransactions(transactions);
 	for (const update of transactionUpdates) {
-		// eslint-disable-next-line no-await-in-loop
 		await updateTransaction(page, update);
 	}
 
 	transactions = [];
 
-	do {
+	while (hasNextPage && currentPage < stopAtPage) {
 		console.log(
 			`\n${chalk.bgMagenta.black(` Navigating to page ${currentPage + 1}… `)}`
 		);
 
 		try {
-			// eslint-disable-next-line no-await-in-loop
 			await Promise.all([
 				page.waitForNavigation({waitUntil: 'networkidle0'}),
 				page.click('.transactions-paging li:last-of-type')
@@ -58,12 +67,12 @@ bootstrapProgram(async ({browser, page}) => {
 		}
 
 		currentPage += 1;
+		hasNextPage = undefined;
 
-		// eslint-disable-next-line no-await-in-loop
 		await page.waitForSelector('main.-loading', {hidden: true});
+		await page.waitFor(1000); // Additionl wait time
 
 		try {
-			// eslint-disable-next-line no-await-in-loop
 			await page.waitForSelector('.transactions-paging .paging-arrow', {
 				visible: true
 			});
@@ -71,25 +80,23 @@ bootstrapProgram(async ({browser, page}) => {
 			console.log(chalk.redBright(` error: ${String(error.message)}`));
 		}
 
-		// eslint-disable-next-line no-await-in-loop
-		numberOfPagingArrows = await page.$$eval(
-			'.transactions-paging .paging-arrow',
-			pagingArrows => pagingArrows.length
-		);
-
-		while (transactions.length === 0) {
-			// eslint-disable-next-line no-await-in-loop
+		while (transactions.length === 0 || hasNextPage === undefined) {
 			await page.waitFor(100);
+			hasNextPage = await page.$$eval(
+				'.transactions-paging .icon-right-arrow',
+				pagingArrows => pagingArrows.length > 0
+			);
 		}
 
 		const transactionUpdates = processTransactions(transactions);
 		for (const update of transactionUpdates) {
-			// eslint-disable-next-line no-await-in-loop
 			await updateTransaction(page, update);
 		}
 
 		transactions = [];
-	} while (numberOfPagingArrows !== 1 && currentPage < stopAtPage);
+	}
+
+	/* eslint-enable no-await-in-loop */
 
 	console.log('\nDone.');
 });
