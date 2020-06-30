@@ -5,25 +5,40 @@ import splitBill from './split-bill'
 import sendEmail from './send-email'
 
 const VZW_VIEWPAYBILL_URL = 'https://login.verizonwireless.com/vzauth/UI/Login'
-const VZW_API_BASEURL =
-  'https://myvpostpay.verizonwireless.com/ui/bill/data/ao/digital'
 
 main()
 async function main() {
   try {
-    let pageTransition = null
-
-    const browser = await puppeteer.launch({headless: false})
+    const browser = await puppeteer.launch({headless: false, devtools: true})
     const page = await browser.newPage()
     await page.goto(VZW_VIEWPAYBILL_URL, {waitUntil: 'networkidle0'})
     await page.waitForSelector('#login-form')
 
+    let summaryResponse = null
+    let detailsResponse = null
+
+    page.on('requestfinished', async request => {
+      const url = request.url()
+      if (url.includes('/summary') || url.includes('/details')) {
+        const response = request.response()
+        if (response && response.ok()) {
+          const json = await response.json()
+          if (url.includes('/summary')) {
+            summaryResponse = json
+          } else if (url.includes('/details')) {
+            detailsResponse = json
+          }
+        }
+      }
+    })
+
     console.log('Logging in to verizonwireless.com…')
     await page.type('#IDToken1', process.env.VZW_USERNAME)
     await page.type('#IDToken2', process.env.VZW_PASSWORD)
-    pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
-    await page.click('#login-submit')
-    await pageTransition
+    await Promise.all([
+      page.waitForNavigation({waitUntil: 'networkidle0'}),
+      page.click('#login-submit'),
+    ])
 
     try {
       await page.waitForSelector('#challengequestion')
@@ -31,21 +46,52 @@ async function main() {
       console.log('Answering security question…')
       await page.type('#IDToken1', process.env.VZW_SECRET_ANSWER)
       await page.click('#rememberComputer') // uncheck rememeber me checkbox
-      pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
-      await page.click('#otherButton')
-      await pageTransition
+      await Promise.all([
+        page.waitForNavigation({waitUntil: 'networkidle0'}),
+        page.click('#otherButton'),
+      ])
     } catch {}
 
     console.log('Waiting for successful login…')
-    await page.waitForSelector('#quickUpdatesSection')
+    await page.waitForSelector('[sitecat-cta="View bill"]')
 
-    console.log('Fetching summary data…')
-    const {balanceText, billDate} = await fetchSummaryData(browser)
+    console.log('Viewing bill…')
+    await Promise.all([
+      page.waitForNavigation({waitUntil: 'networkidle0'}),
+      page.click('[sitecat-cta="View bill"]'),
+    ])
 
-    console.log('Fetching bill details…')
-    const {totalAmount, planAmount, lineLevelDetails} = await fetchBillDetails(
-      browser,
-      billDate,
+    const WAIT_DURATION = 100
+    const MAX_DURATION = 5000
+
+    let totalDuration = 0
+    while (
+      totalDuration <= MAX_DURATION &&
+      // eslint-disable-next-line no-unmodified-loop-condition
+      (summaryResponse === null || detailsResponse === null)
+    ) {
+      totalDuration += WAIT_DURATION
+      await page.waitFor(WAIT_DURATION) // eslint-disable-line no-await-in-loop
+    }
+
+    console.log('Parsing summary data…')
+    const {
+      summary: {
+        cq: {balanceTxt: balanceText},
+      },
+    } = summaryResponse
+
+    console.log('Parsing bill details…')
+    const {
+      data: {
+        bill: {total: totalAmount},
+        accountSummaryDetails,
+        lineLevelDetails,
+      },
+    } = detailsResponse
+
+    const {value: planAmount} = accountSummaryDetails.find(
+      detail => detail.header.toLowerCase() === 'account charges',
     )
 
     await browser.close()
@@ -62,53 +108,6 @@ async function main() {
     await sendEmail({bill, quoteOfTheDay})
   } catch (error) {
     console.error(error.toString())
-  }
-}
-
-async function fetchSummaryData(browser) {
-  const summaryTab = await browser.newPage()
-  await summaryTab.goto(`${VZW_API_BASEURL}/summary`, {
-    waitUntil: 'networkidle0',
-  })
-
-  const {
-    summary: {
-      data: {CURRENT_BILLING_FULL_MONTH, curBillDate},
-      cq: {balanceTxt},
-    },
-  } = JSON.parse(await summaryTab.$eval('pre', element => element.textContent))
-
-  const billDate = new Date(curBillDate)
-  const [month, date, year] = [
-    CURRENT_BILLING_FULL_MONTH,
-    billDate.getDate(),
-    billDate.getFullYear(),
-  ]
-
-  return {
-    balanceText: balanceTxt,
-    billDate: {month, date, year},
-  }
-}
-
-async function fetchBillDetails(browser, billDate) {
-  const detailsTab = await browser.newPage()
-  await detailsTab.goto(
-    `${VZW_API_BASEURL}/details?stmtDate=${billDate.month}+${billDate.date},+${billDate.year}`,
-  )
-
-  const {
-    data: {
-      bill: {total},
-      accountSummaryDetails: [{value: planAmount}],
-      lineLevelDetails,
-    },
-  } = JSON.parse(await detailsTab.$eval('pre', element => element.textContent))
-
-  return {
-    totalAmount: total,
-    planAmount,
-    lineLevelDetails,
   }
 }
 
