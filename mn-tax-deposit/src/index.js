@@ -113,12 +113,20 @@ async function main() {
 
     await page.waitForSelector('.ConfirmationDialog')
 
+    const month = String(new Date().getMonth() || 12).padStart(2, '0')
+    const [_date, _month, year] = selectedFilingPeriod.text.split('-')
+    const filename = `${year}-${month} MN Tax Deposit`
+
     console.log('Validating summary of payment…')
     if (await isExactAmount(page, 'Payment Amount', paymentAmount)) {
       console.log('Confirming summary of payment…')
       pageTransition = page.waitForNavigation({waitUntil: 'networkidle0'})
       await page.click('.ModalActionBar .ActionButton:first-child')
       await pageTransition
+
+      console.log('Copying filename to clipboard…')
+      console.log(` > ${filename}`)
+      await clipboardy.write(filename)
 
       await page.waitForSelector('.ActionButtonMN_PF')
       await page.waitFor(5000) // is this needed?
@@ -133,9 +141,8 @@ async function main() {
     }
 
     console.log('Copying filename to clipboard…')
-    const month = String(new Date().getMonth() || 12).padStart(2, '0')
-    const [_date, _month, year] = selectedFilingPeriod.text.split('-')
-    await clipboardy.write(`${year}-${month} MN Tax Deposit`)
+    console.log(` > ${filename}`)
+    await clipboardy.write(filename)
   } catch (error) {
     console.error(error.toString())
   }
