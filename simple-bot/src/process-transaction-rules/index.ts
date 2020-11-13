@@ -29,7 +29,7 @@ bootstrapProgram(async ({browser, page}) => {
 	await page.waitForSelector('main.-loading', {hidden: true});
 	await page.waitFor(1000); // Additionl wait time
 
-	const stopAtPage = 3;
+	const stopAtPage = 1;
 
 	let currentPage = 1;
 	let hasNextPage;
