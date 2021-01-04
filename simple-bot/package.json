@@ -5,12 +5,16 @@
   "description": "Organize finances in Simple based on a set of rules",
   "license": "MIT",
   "prettier": {
-    "useTabs": true,
-    "bracketSpacing": false,
-    "singleQuote": true
+    "useTabs": false,
+    "trailingComma": "es5",
+    "singleQuote": false,
+    "bracketSpacing": true
   },
   "xo": {
-    "prettier": true
+    "prettier": true,
+    "rules": {
+      "capitalized-comments": "off"
+    }
   },
   "dependencies": {
     "chalk": "3.0.0",
