@@ -1,13 +1,13 @@
 {
   "private": true,
-  "name": "baymax",
+  "name": "jarvis",
   "version": "1.0.0",
-  "description": "Automation tools",
+  "description": "Automation infrastructure",
   "author": "Brent Mealhouse <bmealhouse@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bmealhouse/baymax"
+    "url": "https://github.com/bmealhouse/jarvis"
   },
   "husky": {
     "hooks": {
@@ -15,51 +15,13 @@
     }
   },
   "lint-staged": {
-    "*.js": [
-      "xo",
-      "prettier --write",
-      "git add"
+    "simple-bot/**/*.ts": [
+      "cd simple-bot && prettier --write",
+      "cd simple-bot && xo"
     ]
   },
-  "xo": {
-    "env": [
-      "browser"
-    ],
-    "prettier": true,
-    "extends": "xo-react",
-    "rules": {
-      "capitalized-comments": "off",
-      "no-unused-vars": [
-        "error",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_"
-        }
-      ],
-      "react/prop-types": "off"
-    },
-    "overrides": {
-      "files": "**/src/currency.js",
-      "rules": {
-        "import/extensions": "off"
-      }
-    }
-  },
   "devDependencies": {
-    "eslint-config-xo-react": "0.20.0",
-    "eslint-plugin-react": "7.17.0",
-    "eslint-plugin-react-hooks": "2.3.0",
-    "gatsby": "2.18.11",
-    "husky": "3.1.0",
-    "lint-staged": "9.5.0",
-    "prettier": "1.19.1",
-    "xo": "0.25.3"
-  },
-  "scripts": {
-    "start:eftpstd": "cd eftps-tax-deposit && yarn start",
-    "start:mntd": "cd mn-tax-deposit && yarn start",
-    "start:sbot": "cd simple-bot && yarn start",
-    "start:stam": "cd spotify-to-apple-music && yarn start",
-    "start:vsb": "cd verizon-split-bill && yarn start"
+    "husky": "4.3.6",
+    "lint-staged": "10.5.3"
   }
 }
