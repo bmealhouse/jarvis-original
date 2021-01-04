@@ -4,9 +4,9 @@ import simpleRules from "../config/simple-rules";
 import simpleTransactions from "../config/simple-transactions";
 import { ignoredGoals } from "../config/simple-goals";
 
-export default (
+export default function processTransactions(
   transactions: Simple.Transaction[] = simpleTransactions
-): TransactionUpdate[] => {
+): TransactionUpdate[] {
   const transactionUpdates: TransactionUpdate[] = [];
 
   for (const transaction of transactions) {
@@ -44,7 +44,7 @@ export default (
     }
 
     // Find rule based on where condition (if applicable)
-    const rule = transactionRules.find(rule => {
+    const rule = transactionRules.find((rule) => {
       let result = true;
 
       if (rule.amountEquals) {
@@ -155,4 +155,4 @@ export default (
   }
 
   return transactionUpdates;
-};
+}

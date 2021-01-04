@@ -5,7 +5,7 @@ import outputDryRun from "./output-dry-run";
 import processTransactions from "./process-transactions";
 import updateTransaction from "./update-transaction";
 
-bootstrapProgram(async ({ browser, page }) => {
+void bootstrapProgram(async ({ browser, page }) => {
   if (!browser || !page) {
     console.log("Processing transactions…");
     outputDryRun(processTransactions());
@@ -13,7 +13,7 @@ bootstrapProgram(async ({ browser, page }) => {
   }
 
   let transactions: Simple.Transaction[] = [];
-  page.on("requestfinished", async request => {
+  page.on("requestfinished", async (request) => {
     const url = request.url();
     if (url.includes("/transactions-gather")) {
       const response = request.response();
@@ -27,7 +27,7 @@ bootstrapProgram(async ({ browser, page }) => {
   await page.click(".filter-expand");
   await page.select(".time-span-options > select", "all");
   await page.waitForSelector("main.-loading", { hidden: true });
-  await page.waitFor(1000); // Additionl wait time
+  await page.waitForTimeout(1000); // Additionl wait time
 
   const stopAtPage = 1;
 
@@ -38,10 +38,10 @@ bootstrapProgram(async ({ browser, page }) => {
   /* eslint-disable no-await-in-loop */
 
   while (transactions.length === 0 || hasNextPage === undefined) {
-    await page.waitFor(100);
+    await page.waitForTimeout(100);
     hasNextPage = await page.$$eval(
       ".transactions-paging .icon-right-arrow",
-      pagingArrows => pagingArrows.length > 0
+      (pagingArrows) => pagingArrows.length > 0
     );
   }
 
@@ -62,29 +62,31 @@ bootstrapProgram(async ({ browser, page }) => {
         page.waitForNavigation({ waitUntil: "networkidle0" }),
         page.click(".transactions-paging li:last-of-type"),
       ]);
-    } catch (error) {
-      console.log(chalk.redBright(` error: ${String(error.message)}`));
+    } catch (error: unknown) {
+      const typedError = error as Error;
+      console.log(chalk.redBright(` error: ${String(typedError.message)}`));
     }
 
     currentPage += 1;
     hasNextPage = undefined;
 
     await page.waitForSelector("main.-loading", { hidden: true });
-    await page.waitFor(1000); // Additionl wait time
+    await page.waitForTimeout(1000); // Additionl wait time
 
     try {
       await page.waitForSelector(".transactions-paging .paging-arrow", {
         visible: true,
       });
-    } catch (error) {
-      console.log(chalk.redBright(` error: ${String(error.message)}`));
+    } catch (error: unknown) {
+      const typedError = error as Error;
+      console.log(chalk.redBright(` error: ${String(typedError.message)}`));
     }
 
     while (transactions.length === 0 || hasNextPage === undefined) {
-      await page.waitFor(100);
+      await page.waitForTimeout(100);
       hasNextPage = await page.$$eval(
         ".transactions-paging .icon-right-arrow",
-        pagingArrows => pagingArrows.length > 0
+        (pagingArrows) => pagingArrows.length > 0
       );
     }
 

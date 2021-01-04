@@ -4,10 +4,10 @@ import * as puppeteer from "puppeteer";
 import { TransactionUpdate } from "../../types";
 import { goalSettingsById } from "../config/simple-goals";
 
-export default async (
+export default async function updateTransaction(
   page: puppeteer.Page,
   { applyCategory, applyGoal, applyMemo, transaction }: TransactionUpdate
-): Promise<void> => {
+): Promise<void> {
   const {
     uuid,
     bookkeeping_type: bookkeepingType,
@@ -36,7 +36,7 @@ export default async (
     waitForNavigation: true,
   });
 
-  await page.waitFor(250); // Animation
+  await page.waitForTimeout(250); // Animation
 
   console.log("  | waiting for transaction breakdown table to load…");
   await page.waitForSelector(".breakdown-table .-faux", {
@@ -51,7 +51,7 @@ export default async (
       waitForNavigation: true,
     });
 
-    await page.waitFor(250); // Animation
+    await page.waitForTimeout(250); // Animation
     await type({
       name: "categories filter text box",
       selector: '.sidebar-filtered-list input[type="text"]',
@@ -82,7 +82,7 @@ export default async (
       displayError: false,
     });
 
-    await page.waitFor(250); // Animation
+    await page.waitForTimeout(250); // Animation
     await waitForTransactionRefresh();
   }
 
@@ -95,7 +95,7 @@ export default async (
     });
 
     if (element) {
-      await page.waitFor(250); // Animation
+      await page.waitForTimeout(250); // Animation
       await type({
         name: "goals filter text box",
         selector: '.sidebar-filtered-list input[type="text"]',
@@ -108,7 +108,7 @@ export default async (
         waitForNavigation: false,
       });
 
-      await page.waitFor(250); // Animation
+      await page.waitForTimeout(250); // Animation
       await click({
         name: "insufficient funds message",
         selector: '.offset-content.-small button[type="button"]',
@@ -116,7 +116,7 @@ export default async (
         displayError: false,
       });
 
-      await page.waitFor(250); // Animation
+      await page.waitForTimeout(250); // Animation
       await waitForTransactionRefresh();
     }
   }
@@ -188,6 +188,7 @@ export default async (
       });
 
       console.log(`  | clicking ${name}…`);
+      // eslint-disable-next-line unicorn/prefer-ternary
       if (waitForNavigation) {
         await Promise.all([
           page.waitForNavigation({ waitUntil: "networkidle0" }),
@@ -198,10 +199,11 @@ export default async (
       }
 
       return element;
-    } catch (error) {
+    } catch (error: unknown) {
       if (displayError) {
+        const typedError = error as Error;
         console.log(
-          `  | ${chalk.redBright(`error: ${String(error.message)}`)}`
+          `  | ${chalk.redBright(`error: ${String(typedError.message)}`)}`
         );
       }
     }
@@ -226,10 +228,11 @@ export default async (
       await element.type(text);
 
       return element;
-    } catch (error) {
+    } catch (error: unknown) {
       if (displayError) {
+        const typedError = error as Error;
         console.log(
-          `  | ${chalk.redBright(`error: ${String(error.message)}`)}`
+          `  | ${chalk.redBright(`error: ${String(typedError.message)}`)}`
         );
       }
     }
@@ -244,4 +247,4 @@ export default async (
       });
     } catch {}
   }
-};
+}

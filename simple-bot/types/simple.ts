@@ -153,7 +153,7 @@ export namespace Simple {
     OtherHome = "Other Home",
     PropertyTax = "Property Tax",
     Rent = "Rent",
-    RentersInsurance = "Renter's Insurance", // eslint-disable-line unicorn/string-content
+    RentersInsurance = "Renter's Insurance",
     Storage = "Storage",
 
     // Income

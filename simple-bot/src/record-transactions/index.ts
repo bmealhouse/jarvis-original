@@ -4,13 +4,13 @@ import * as chalk from "chalk";
 import { Simple } from "../../types";
 import bootstrapProgram from "../bootstrap-program";
 
-bootstrapProgram(async ({ browser, page }) => {
+void bootstrapProgram(async ({ browser, page }) => {
   if (!browser || !page) return;
 
   const transactions: Simple.Transaction[] = [];
 
   console.log("Recoding transactions…");
-  page.on("requestfinished", async request => {
+  page.on("requestfinished", async (request) => {
     const url = request.url();
     if (url.includes("/transactions-gather")) {
       const response = request.response();
@@ -30,7 +30,7 @@ bootstrapProgram(async ({ browser, page }) => {
   await page.click(".filter-expand");
   await page.select(".time-span-options > select", "all");
   await page.waitForSelector("main.-loading", { hidden: true });
-  await page.waitFor(1000); // Additionl wait time
+  await page.waitForTimeout(1000); // Additionl wait time
 
   let numberOfPagingArrows;
   console.log("Visiting all pages to collect transactions…");
@@ -43,7 +43,7 @@ bootstrapProgram(async ({ browser, page }) => {
     ]);
 
     await page.waitForSelector("main.-loading", { hidden: true });
-    await page.waitFor(1000); // Additionl wait time
+    await page.waitForTimeout(1000); // Additionl wait time
 
     await page.waitForSelector(".transactions-paging .paging-arrow", {
       visible: true,
@@ -51,13 +51,12 @@ bootstrapProgram(async ({ browser, page }) => {
 
     numberOfPagingArrows = await page.$$eval(
       ".transactions-paging .paging-arrow",
-      pagingArrows => pagingArrows.length
+      (pagingArrows) => pagingArrows.length
     );
   } while (numberOfPagingArrows !== 1);
   /* eslint-enable no-await-in-loop */
 
-  // eslint-disable-next-line unicorn/string-content
-  const data = `/* eslint-disable unicorn/string-content */
+  const data = `
 import {Simple} from '../../types';
 
 // prettier-ignore

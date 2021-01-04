@@ -9,7 +9,9 @@ const config = {
   take: 99,
 };
 
-export default (transactionUpdates: TransactionUpdate[]): void => {
+export default function outputDryRun(
+  transactionUpdates: TransactionUpdate[]
+): void {
   for (const { transaction, ...updates } of transactionUpdates) {
     if (config.filter) {
       if (!transaction.description.toUpperCase().includes(config.filter)) {
@@ -123,4 +125,4 @@ export default (transactionUpdates: TransactionUpdate[]): void => {
   }
 
   console.log("");
-};
+}

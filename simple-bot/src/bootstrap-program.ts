@@ -14,9 +14,9 @@ interface ProgramContext {
   page?: puppeteer.Page;
 }
 
-export default async (
+export default async function bootstrapProgram(
   program: (context: ProgramContext) => Promise<void>
-): Promise<void> => {
+): Promise<void> {
   if (process.env.DRY_RUN) {
     return program({});
   }
@@ -24,7 +24,7 @@ export default async (
   // Check for .lockout file
   const rootDir = path.join(__dirname, "..");
   const files = await fs.promises.readdir(rootDir);
-  const lockoutFile = files.find(file => file.includes(".lockout"));
+  const lockoutFile = files.find((file) => file.includes(".lockout"));
   const lockoutFormat = "YYYY-MM-DD-hh-mm-A";
 
   // When a lockout file is found, if it was created more than 24 hours ago,
@@ -90,4 +90,4 @@ export default async (
   await page.waitForSelector("main.-loading", { hidden: true });
 
   return program({ browser, page });
-};
+}
