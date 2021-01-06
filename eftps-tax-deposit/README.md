@@ -1,3 +1,7 @@
 # eftps-tax-deposit
 
-> Schedules EFTPS tax deposits
+> Schedule EFTPS tax deposits
+
+```shell
+yarn start
+```
