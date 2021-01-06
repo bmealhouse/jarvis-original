@@ -1,7 +1,5 @@
 # folders
-.cache
 node_modules
-public
 
 # files
 *.md
