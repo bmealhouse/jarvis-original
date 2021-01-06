@@ -1,3 +1,7 @@
 # mn-tax-deposit
 
-> Schedules MN tax deposits
+> Schedule MN tax deposits
+
+```shell
+yarn start
+```
