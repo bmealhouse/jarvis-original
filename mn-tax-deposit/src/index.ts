@@ -143,7 +143,7 @@ async function main() {
 }
 
 interface ValidationData {
-  paymentAmount: string
+  paymentAmount: string;
 }
 
 async function isValid(
