@@ -15,13 +15,35 @@
     }
   },
   "lint-staged": {
+    "eftps-tax-deposit/**/*.ts": [
+      "yarn format:eftps-tax-deposit",
+      "yarn lint:eftps-tax-deposit"
+    ],
+    "mn-tax-deposit/**/*.ts": [
+      "yarn format:mn-tax-deposit",
+      "yarn lint:mn-tax-deposit"
+    ],
     "simple-bot/**/*.ts": [
-      "cd simple-bot && prettier --write",
-      "cd simple-bot && xo"
+      "yarn format:simple-bot",
+      "yarn lint:simple-bot"
+    ],
+    "verizon-split-bill/**/*.ts": [
+      "yarn format:verizon-split-bill",
+      "yarn lint:verizon-split-bill"
     ]
   },
   "devDependencies": {
     "husky": "4.3.6",
     "lint-staged": "10.5.3"
+  },
+  "scripts": {
+    "format:eftps-tax-deposit": "cd eftps-tax-deposit && yarn prettier --write",
+    "format:mn-tax-deposit": "cd mn-tax-deposit && yarn prettier --write",
+    "format:simple-bot": "cd simple-bot && yarn prettier --write",
+    "format:verizon-split-bill": "cd verizon-split-bill && yarn prettier --write",
+    "lint:eftps-tax-deposit": "cd eftps-tax-deposit && yarn xo",
+    "lint:mn-tax-deposit": "cd mn-tax-deposit && yarn xo",
+    "lint:simple-bot": "cd simple-bot && yarn xo",
+    "lint:verizon-split-bill": "cd verizon-split-bill && yarn xo"
   }
 }
