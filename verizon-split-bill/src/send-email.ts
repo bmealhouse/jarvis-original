@@ -1,48 +1,54 @@
-import sendgrid from '@sendgrid/mail'
-import mjml2html from 'mjml'
+import sendgrid from "@sendgrid/mail";
+import mjml2html from "mjml";
+import { SplitBill, QuoteOfTheDay } from "../types";
 
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY)
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY!);
 
-export default async data => {
-  console.log('Sending email…')
+interface EmailInput {
+  bill: SplitBill;
+  quoteOfTheDay: QuoteOfTheDay;
+}
 
-  const emailMessage = {
-    to: process.env.SENDGRID_TO.split(','),
-    from: process.env.SENDGRID_FROM,
-    subject: 'Verizon Bill',
-    html: generateHtml(data),
-  }
+export default async function sendEmail(emailInput: EmailInput) {
+  console.log("Sending email…");
+
+  const emailMessage: sendgrid.MailDataRequired = {
+    to: process.env.SENDGRID_TO!.split(","),
+    from: process.env.SENDGRID_FROM!,
+    subject: "Verizon Bill",
+    html: generateHtml(emailInput),
+  };
 
   try {
-    await sendgrid.send(emailMessage)
-  } catch (error) {
-    console.error(error.toString())
+    // await sendgrid.send(emailMessage);
+  } catch (error: unknown) {
+    console.error(error);
   }
 }
 
-function generateHtml({quoteOfTheDay, bill}) {
+function generateHtml({ bill, quoteOfTheDay }: EmailInput): string {
   const breakdownPerLine = bill.breakdownPerLine.map(
     (line, index) => `<tr${
       index < bill.breakdownPerLine.length - 1
         ? ' style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;"'
-        : ''
+        : ""
     }>
   <td style="padding: 0 15px 0 0;font-weight:bold;">${line.firstName}</td>
   <td style="padding: 0 15px;">${line.phoneNumber}</td>
   <td style="padding: 0 0 0 15px;">${line.amount.format()}</td>
-</tr>`,
-  )
+</tr>`
+  );
 
   const breakdownPerFamily = bill.breakdownPerFamily.map(
     (family, index) => `<tr ${
       index < bill.breakdownPerFamily.length - 1
         ? ' style="border-bottom:1px solid #ecedee;text-align:left;padding:15px 0;"'
-        : ''
+        : ""
     }>
   <td style="padding: 0 15px 0 0;font-weight:bold;">${family.names}</td>
   <td style="padding: 0 0 0 15px;">${family.amount.format()}</td>
-</tr>`,
-  )
+</tr>`
+  );
 
   const mjmlTemplate = `
 <mjml>
@@ -77,7 +83,7 @@ function generateHtml({quoteOfTheDay, bill}) {
       <mj-column>
         <mj-text font-family="Helvetica, Arial" font-size="18px" font-weight="bold">Price per line.</mj-text>
         <mj-table font-family="Helvetica, Arial">
-          ${breakdownPerLine.join('')}
+          ${breakdownPerLine.join("")}
         </mj-table>
       </mj-column>
     </mj-section>
@@ -85,7 +91,7 @@ function generateHtml({quoteOfTheDay, bill}) {
       <mj-column>
         <mj-text font-family="Helvetica, Arial" font-size="18px" font-weight="bold">Price per family.</mj-text>
         <mj-table font-family="Helvetica, Arial">
-          ${breakdownPerFamily.join('')}
+          ${breakdownPerFamily.join("")}
         </mj-table>
       </mj-column>
     </mj-section>
@@ -101,12 +107,12 @@ function generateHtml({quoteOfTheDay, bill}) {
     </mj-section>
   </mj-body>
 </mjml>
-`
+`;
 
-  const {html} = mjml2html(mjmlTemplate, {
+  const { html } = mjml2html(mjmlTemplate, {
     minify: true,
-    validationLevel: 'strict',
-  })
+    validationLevel: "strict",
+  });
 
-  return html
+  return html;
 }

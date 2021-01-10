@@ -4,44 +4,38 @@
   "version": "1.0.0",
   "description": "Split Verizon bill between family members",
   "license": "MIT",
-  "main": "index.js",
   "prettier": {
     "useTabs": false,
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": false
+    "trailingComma": "es5",
+    "singleQuote": false,
+    "bracketSpacing": true
   },
   "xo": {
     "prettier": true,
     "rules": {
-      "capitalized-comments": "off",
-      "no-unused-vars": [
-        "error",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_"
-        }
-      ]
+      "capitalized-comments": "off"
     }
   },
   "dependencies": {
-    "@sendgrid/mail": "6.5.4",
-    "axios": "0.19.2",
-    "currency.js": "1.2.2",
-    "esm": "3.2.25",
-    "mjml": "4.6.2",
-    "puppeteer": "2.1.1"
+    "@sendgrid/mail": "7.4.1",
+    "axios": "0.21.1",
+    "currency.js": "2.0.3",
+    "dotenv": "8.2.0",
+    "mjml": "4.8.1",
+    "puppeteer": "5.5.0"
   },
   "devDependencies": {
-    "dotenv": "8.2.0",
-    "eslint": "6.8.0",
-    "eslint-plugin-prettier": "3.1.2",
-    "prettier": "1.19.1",
-    "webpack": "4.42.0",
-    "xo": "0.28.0"
+    "@types/inquirer": "7.3.1",
+    "@types/mjml": "4.7.0",
+    "@types/node": "14.14.20",
+    "@types/puppeteer": "5.4.2",
+    "prettier": "2.2.1",
+    "ts-node": "9.1.1",
+    "typescript": "4.1.3",
+    "webpack": "5.11.1",
+    "xo": "0.37.1"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "ts-node src/index.ts"
   }
 }
