@@ -6,6 +6,9 @@ import * as clipboardy from "clipboardy";
 config();
 void main();
 
+const [_node, _script, arg] = process.argv;
+const taxForm = arg === "--form-940" ? "940" : "941";
+
 async function main() {
   try {
     const browser = await puppeteer.launch({
@@ -38,8 +41,8 @@ async function main() {
 
     await page.waitForSelector('[value="next"]');
 
-    console.log("Entering form 941…");
-    await page.type("#TaxForm_EditField", "941");
+    console.log(`Entering form ${taxForm}…`);
+    await page.type("#TaxForm_EditField", taxForm);
     await Promise.all([
       page.waitForNavigation({ waitUntil: "networkidle0" }),
       page.click('[value="next"]'),
@@ -56,24 +59,30 @@ async function main() {
 
     type PaymentAnswers = {
       paymentAmount: string;
-      taxPeriod: "Q1" | "Q2" | "Q3" | "Q4";
+      taxPeriod?: "Q1" | "Q2" | "Q3" | "Q4";
       year: string;
     };
+
+    const questions: inquirer.QuestionCollection[] = [
+      { name: "paymentAmount", message: "Payment amount (EFTPS):" },
+    ];
+
+    if (taxForm === "941") {
+      questions.push({
+        type: "list",
+        name: "taxPeriod",
+        message: "Tax period:",
+        choices: ["Q1", "Q2", "Q3", "Q4"],
+      });
+    }
+
+    questions.push({ name: "year", message: "Year:" });
 
     const {
       paymentAmount,
       taxPeriod,
       year,
-    } = await inquirer.prompt<PaymentAnswers>([
-      { name: "paymentAmount", message: "Payment amount (EFTPS):" },
-      {
-        type: "list",
-        name: "taxPeriod",
-        message: "Tax period:",
-        choices: ["Q1", "Q2", "Q3", "Q4"],
-      },
-      { name: "year", message: "Year:" },
-    ]);
+    } = await inquirer.prompt<PaymentAnswers>(questions);
 
     await page.waitForSelector('[name="singlePayment.amount.value"]');
 
@@ -82,10 +91,14 @@ async function main() {
       '[name="singlePayment.amount.value"]',
       formatCurrency(paymentAmount)
     );
-    await page.select(
-      '[name="singlePayment.taxPeriodMonth"]',
-      { Q1: "3", Q2: "6", Q3: "9", Q4: "12" }[taxPeriod]
-    );
+
+    if (taxForm === "941" && taxPeriod) {
+      await page.select(
+        '[name="singlePayment.taxPeriodMonth"]',
+        { Q1: "3", Q2: "6", Q3: "9", Q4: "12" }[taxPeriod]
+      );
+    }
+
     await page.type('[name="singlePayment.taxPeriodYear"]', year);
 
     console.log("Selecting settlement date…");
@@ -101,43 +114,43 @@ async function main() {
       page.click('[value="next"]'),
     ]);
 
-    type SubCategoryAmountAnswers = {
-      socialSecurity: string;
-      medicare: string;
-      taxWithholding: string;
-    };
+    let subCategoryAmountAnswers: SubCategoryAmountAnswers | undefined;
 
-    const {
-      socialSecurity,
-      medicare,
-      taxWithholding,
-    } = await inquirer.prompt<SubCategoryAmountAnswers>([
-      { name: "socialSecurity", message: "Social security:" },
-      { name: "medicare", message: "Medicare:" },
-      { name: "taxWithholding", message: "Tax withholding:" },
-    ]);
+    if (taxForm === "941") {
+      const answers = await inquirer.prompt<SubCategoryAmountAnswers>([
+        { name: "socialSecurity", message: "Social security:" },
+        { name: "medicare", message: "Medicare:" },
+        { name: "taxWithholding", message: "Tax withholding:" },
+      ]);
 
-    await page.waitForSelector(
-      '[name="singlePayment.subCategories[0].amount.value"]'
-    );
+      subCategoryAmountAnswers = {
+        socialSecurity: answers.socialSecurity,
+        medicare: answers.medicare,
+        taxWithholding: answers.taxWithholding,
+      };
 
-    console.log("Entering sub category amounts…");
-    await page.type(
-      '[name="singlePayment.subCategories[0].amount.value"]',
-      formatCurrency(socialSecurity)
-    );
-    await page.type(
-      '[name="singlePayment.subCategories[1].amount.value"]',
-      formatCurrency(medicare)
-    );
-    await page.type(
-      '[name="singlePayment.subCategories[2].amount.value"]',
-      formatCurrency(taxWithholding)
-    );
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: "networkidle0" }),
-      page.click('[value="next"]'),
-    ]);
+      await page.waitForSelector(
+        '[name="singlePayment.subCategories[0].amount.value"]'
+      );
+
+      console.log("Entering sub category amounts…");
+      await page.type(
+        '[name="singlePayment.subCategories[0].amount.value"]',
+        formatCurrency(subCategoryAmountAnswers.socialSecurity)
+      );
+      await page.type(
+        '[name="singlePayment.subCategories[1].amount.value"]',
+        formatCurrency(subCategoryAmountAnswers.medicare)
+      );
+      await page.type(
+        '[name="singlePayment.subCategories[2].amount.value"]',
+        formatCurrency(subCategoryAmountAnswers.taxWithholding)
+      );
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: "networkidle0" }),
+        page.click('[value="next"]'),
+      ]);
+    }
 
     await page.waitForSelector('[value="makePayment"]');
 
@@ -145,9 +158,7 @@ async function main() {
     if (
       await isValid(page, {
         paymentAmount,
-        socialSecurity,
-        medicare,
-        taxWithholding,
+        subCategoryAmountAnswers,
       })
     ) {
       console.log("Scheduling payment…");
@@ -165,7 +176,10 @@ async function main() {
     }
 
     const month = String(new Date().getMonth() || 12).padStart(2, "0");
-    const filename = `${year}-${month} EFTPS Deposit`;
+    const filename =
+      taxForm === "941"
+        ? `${year}-${month} EFTPS Deposit`
+        : `${year}-EOY QUBED, INC Form 940 Deposit`;
 
     console.log("Copying filename to clipboard…");
     console.log(` > ${filename}`);
@@ -179,11 +193,15 @@ function formatCurrency(value: string) {
   return value.replace(/[$,]/g, "");
 }
 
-interface ValidationData {
-  paymentAmount: string;
+type SubCategoryAmountAnswers = {
   socialSecurity: string;
   medicare: string;
   taxWithholding: string;
+};
+
+interface ValidationData {
+  paymentAmount: string;
+  subCategoryAmountAnswers?: SubCategoryAmountAnswers;
 }
 
 async function isValid(
@@ -191,14 +209,43 @@ async function isValid(
   data: ValidationData
 ): Promise<boolean> {
   const rowsToValidateArg = [
-    { label: "Tax Form", value: "941 Employers Federal Tax" },
-    { label: "Tax Type", value: "Federal Tax Deposit" },
-    { label: "Payment Amount", value: data.paymentAmount },
-    { label: "Settlement Date", value: "%before-the-16th%" },
-    { label: "Social Security", value: data.socialSecurity },
-    { label: "Medicare", value: data.medicare },
-    { label: "Tax Withholding", value: data.taxWithholding },
+    {
+      label: "Tax Form",
+      value:
+        taxForm === "941"
+          ? "941 Employers Federal Tax"
+          : "940 Employers Annual Unemployment Tax",
+    },
+    {
+      label: "Tax Type",
+      value: "Federal Tax Deposit",
+    },
+    {
+      label: "Payment Amount",
+      value: data.paymentAmount,
+    },
   ];
+
+  if (taxForm === "941" && data.subCategoryAmountAnswers) {
+    rowsToValidateArg.push(
+      {
+        label: "Settlement Date",
+        value: "%before-the-16th%",
+      },
+      {
+        label: "Social Security",
+        value: data.subCategoryAmountAnswers.socialSecurity,
+      },
+      {
+        label: "Medicare",
+        value: data.subCategoryAmountAnswers.medicare,
+      },
+      {
+        label: "Tax Withholding",
+        value: data.subCategoryAmountAnswers.taxWithholding,
+      }
+    );
+  }
 
   return page.$$eval(
     ".formContainer tr",
