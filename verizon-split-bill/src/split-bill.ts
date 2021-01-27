@@ -20,10 +20,10 @@ export default function splitBill(bill: Bill): SplitBill {
 }
 
 function calculateTotal(lines: LineInfo[]): currencyJs {
-  const total = currency(0);
+  let total = currency(0);
 
   for (const line of lines) {
-    total.add(line.amount);
+    total = total.add(line.amount);
   }
 
   return total;
@@ -31,7 +31,7 @@ function calculateTotal(lines: LineInfo[]): currencyJs {
 
 function calculateBreakdownPerLine(bill: Bill): LineInfo[] {
   const numberOfLines = bill.lineLevelDetails.length;
-  const planAmountPerLine = currency(bill.planAmount).divide(numberOfLines);
+  const planAmountPerLine = bill.planAmount.divide(numberOfLines);
   const breakdownPerLine = bill.lineLevelDetails.map<LineInfo>((line) => ({
     firstName: line.header.split(" ")[0],
     phoneNumber: line.mtn.replace(/\./g, "-"),

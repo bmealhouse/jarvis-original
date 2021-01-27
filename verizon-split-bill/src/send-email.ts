@@ -2,8 +2,6 @@ import sendgrid from "@sendgrid/mail";
 import mjml2html from "mjml";
 import { SplitBill, QuoteOfTheDay } from "../types";
 
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY!);
-
 interface EmailInput {
   bill: SplitBill;
   quoteOfTheDay: QuoteOfTheDay;
@@ -20,7 +18,8 @@ export default async function sendEmail(emailInput: EmailInput) {
   };
 
   try {
-    // await sendgrid.send(emailMessage);
+    sendgrid.setApiKey(process.env.SENDGRID_API_KEY!);
+    await sendgrid.send(emailMessage);
   } catch (error: unknown) {
     console.error(error);
   }
