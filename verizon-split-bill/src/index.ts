@@ -57,12 +57,12 @@ async function main() {
     } catch {}
 
     console.log("Waiting for successful login…");
-    await page.waitForSelector('[sitecat-cta="View bill"]');
+    await page.waitForSelector('[sitecat-key="MVO_LT_BILL_DEFAULT"]');
 
     console.log("Viewing bill…");
     await Promise.all([
       page.waitForNavigation({ waitUntil: "networkidle0" }),
-      page.click('[sitecat-cta="View bill"]'),
+      page.click('[sitecat-key="MVO_LT_BILL_DEFAULT"]'),
     ]);
 
     const WAIT_DURATION = 100;
