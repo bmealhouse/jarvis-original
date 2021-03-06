@@ -13,8 +13,8 @@ async function main() {
       headless: false,
       slowMo: 50,
       defaultViewport: {
-        width: 1280,
-        height: 960,
+        width: 1024,
+        height: 768,
       },
     });
 
@@ -109,10 +109,6 @@ async function main() {
       page.waitForSelector(".ActionButtonOK"),
     ]);
 
-    const month = String(new Date().getMonth() || 12).padStart(2, "0");
-    const [_date, _month, year] = selectedPeriod.text.split("-");
-    const filename = `${year}-${month} MN Tax Deposit`;
-
     console.log("Validating confirmation…");
     if (await isValid(page, { paymentAmount })) {
       console.log("Confirming summary of payment…");
@@ -121,11 +117,6 @@ async function main() {
         page.click(".ActionButtonOK"),
       ]);
 
-      // FIXME: remove this if navigation to printer friendly version is successful
-      console.log("Copying filename to clipboard…");
-      console.log(` > ${filename}`);
-      await clipboardy.write(filename);
-
       await page.waitForSelector("#Dd-4");
 
       console.log("Navigating to printer friendly version…");
@@ -133,6 +124,10 @@ async function main() {
     } else {
       console.log("  something’s not quite right…\n");
     }
+
+    const month = String(new Date().getMonth() || 12).padStart(2, "0");
+    const [_date, _month, year] = selectedPeriod.text.split("-");
+    const filename = `${year}-${month} MN Tax Deposit`;
 
     console.log("Copying filename to clipboard…");
     console.log(` > ${filename}`);

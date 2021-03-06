@@ -16,8 +16,8 @@ async function main() {
       headless: false,
       slowMo: 25,
       defaultViewport: {
-        width: 1280,
-        height: 960,
+        width: 1024,
+        height: 768,
       },
     });
 
