@@ -44,11 +44,7 @@ export default async function bootstrapProgram(
   const browser = await puppeteer.launch({
     devtools: false,
     headless: false,
-    slowMo: 25,
-    defaultViewport: {
-      width: 1280,
-      height: 1000,
-    },
+    slowMo: 50,
   });
 
   const page = await browser.newPage();
