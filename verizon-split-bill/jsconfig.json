@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    // @tsconfig/node14 base config
+    "lib": ["es2020"],
+    // "module": "commonJS",
+    "target": "es2020",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    // my overrides
+    "checkJs": true,
+    "module": "esnext",
+    "moduleResolution": "node"
+  },
+  "exclude": ["node_modules"]
+}
