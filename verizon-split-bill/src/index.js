@@ -103,7 +103,7 @@ async function main() {
 
     const topSection = buildTopSection(billLandingData);
     const chargesByMtn = buildChargesByMtn(
-      topSection.billAmount,
+      topSection,
       billLandingMiddleSectionData
     );
     const chargesByFamily = buildChargesByFamily(chargesByMtn);
@@ -165,11 +165,11 @@ function buildTopSection(data) {
 }
 
 /**
- * @param {currency} billAmount
+ * @param {EmailTopSection} topSection
  * @param {VerizonResponse} data
  * @returns {ChargesByMtn}
  */
-function buildChargesByMtn(billAmount, data) {
+function buildChargesByMtn(topSection, data) {
   console.log("Parsing bill landing middle section data…");
 
   const {
@@ -180,8 +180,23 @@ function buildChargesByMtn(billAmount, data) {
     (section) => section.sectionType === "viewBillMiddleSection"
   );
 
-  const viewBillChargesSections = viewBillMiddleSection?.sections.find(
-    (section) => section.sectionType === "viewBillChargesSection"
+  const estimatedChargesBottomSection = viewBillMiddleSection?.sections.find(
+    (section) => section.sectionType === "estimatedChargesBottomSection"
+  );
+
+  const footerContent = estimatedChargesBottomSection?.contents.find(
+    (content) => content.contentType === "footer"
+  );
+
+  const currentBillCost = footerContent?.items.find(
+    (item) => item.itemKey === "currentBillCost"
+  );
+
+  topSection.billAmount = currency(
+    Math.max(
+      topSection.billAmount.value,
+      currency(currentBillCost?.itemValue ?? 0).value
+    )
   );
 
   /** @type {currency} */
@@ -189,6 +204,10 @@ function buildChargesByMtn(billAmount, data) {
 
   /** @type {ChargesByMtn} */
   const chargesByMtn = {};
+
+  const viewBillChargesSections = viewBillMiddleSection?.sections.find(
+    (section) => section.sectionType === "viewBillChargesSection"
+  );
 
   for (const charge of viewBillChargesSections?.data.groupCharges ?? []) {
     for (const key of charge.dataKey) {
@@ -223,7 +242,7 @@ function buildChargesByMtn(billAmount, data) {
     total = total.add(item.amount);
   }
 
-  const leftOverCents = total.subtract(billAmount);
+  const leftOverCents = total.subtract(topSection.billAmount);
   const discountedMtn = chargesByMtn[VZW_DISCOUNTED_MTN];
   discountedMtn.amount = discountedMtn.amount.subtract(leftOverCents);
 
