@@ -23,14 +23,14 @@ async function main() {
       waitUntil: "networkidle2",
     });
 
-    await page.waitForSelector("#Dd-4");
+    await page.waitForSelector("#Dd-5");
 
     console.log("Logging in to mndor.state.mn.us…");
-    await page.type("#Dd-4", process.env.MNDOR_USERNAME!);
-    await page.type("#Dd-5", process.env.MNDOR_PASSWORD!);
+    await page.type("#Dd-5", process.env.MNDOR_USERNAME!);
+    await page.type("#Dd-6", process.env.MNDOR_PASSWORD!);
     await Promise.all([
       page.waitForNavigation({ waitUntil: "networkidle0" }),
-      page.click("#Dd-6"),
+      page.click("#Dd-7"),
     ]);
 
     // prompt for security code
