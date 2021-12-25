@@ -76,13 +76,17 @@ async function main() {
     } catch {}
 
     console.log("Waiting for successful login…");
-    await page.waitForSelector('[analyticstrack="View bill"]');
+    await page.waitForSelector("#welcome_message");
+
+    // "button[data-track*='Bill Tile']"
 
     console.log("Viewing bill…");
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: "networkidle0" }),
-      page.click('[analyticstrack="View bill"]'),
-    ]);
+    await page.goto(
+      "https://www.verizon.com/digital/nsa/secure/ui/bill/viewbill/",
+      {
+        waitUntil: "networkidle0",
+      }
+    );
 
     const WAIT_DURATION = 100;
     const MAX_DURATION = 5000;
